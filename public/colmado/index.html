@@ -220,15 +220,15 @@ body.admin .shop{display:none}body.admin .panel{display:block}
     <div class="wrap two">
       <div>
         <h2>¿Qué te falta en la casa?</h2>
-        <p>Tómale una foto a tu nevera, tu alacena o tus gavetas. Te decimos qué te hace falta de lo que tenemos aquí, y hasta cuándo comerte lo fresco.</p>
-        <label class="btn filebtn">Tomar o subir fotos<input id="dfile" type="file" accept="image/*" multiple aria-label="Fotos de tu nevera o alacena"></label>
-        <p class="unit" id="dcount" style="margin:8px 0 0">Hasta 4 fotos (opcional).</p>
+        <p>Tómale una foto o un video a tu nevera, tu alacena o tus gavetas. Te decimos qué te hace falta de lo que tenemos aquí, y hasta cuándo comerte lo fresco.</p>
+        <label class="btn filebtn">Foto o video<input id="dfile" type="file" accept="image/*,video/*" multiple aria-label="Fotos o video de tu nevera o alacena"></label>
+        <p class="unit" id="dcount" style="margin:8px 0 0">Hasta 4 fotos o 1 video corto (opcional).</p>
         <label for="dtext">¿Algo en especial? (opcional)</label>
         <div class="say"><input id="dtext" class="field" placeholder="Ej.: me faltan las especias para el sancocho"><button class="btn small" id="dmic" type="button" aria-label="Decirlo con la voz"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="2" width="6" height="12" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></button></div>
-        <p class="unit" id="dmichint" style="margin:6px 0 0">Puedes escribirlo o decirlo con el micrófono. La foto es opcional.</p>
+        <p class="unit" id="dmichint" style="margin:6px 0 0">Puedes escribirlo o decirlo con el micrófono. La foto o el video son opcionales.</p>
         <label class="sw"><input type="checkbox" id="dsano"> Quiero comer un poquito más sano</label>
         <p><button class="btn red" id="dgo">Ver qué me falta</button></p>
-        <p class="demo">Las fotos solo se usan para hacer tu lista. No se guardan.</p>
+        <p class="demo">Las fotos y videos solo se usan para hacer tu lista. No se guardan.</p>
       </div>
       <div id="dres"></div>
     </div>
@@ -554,8 +554,8 @@ let dimgs=[];
   drec.onerror=e=>{$('#dmichint').textContent=/not-allowed|service/.test(e.error)?'No pude usar el micrófono. Usa el del teclado.':'No te escuché bien. Habla despacito y otra vez.'};
   drec.onend=()=>{drec=null;$('#dmic').style.background='';if($('#dmichint').textContent.startsWith('Te escucho'))$('#dmichint').textContent='Listo. Toca «Ver qué me falta».'};
   try{drec.start()}catch(_){drec=null;$('#dmic').style.background=''}}}
-$('#dfile').addEventListener('change',async e=>{$('#dcount').textContent='Preparando fotos…';try{dimgs=await prepImages(e.target.files)}catch(_){dimgs=[]}$('#dcount').textContent=dimgs.length?dimgs.length+(dimgs.length>1?' fotos listas':' foto lista'):'No pude abrir las fotos. Prueba otra vez.'});
-$('#dgo').onclick=async()=>{if(!dimgs.length&&!$('#dtext').value.trim()){$('#dcount').textContent='Toma una foto o dime qué te falta.';return}
+$('#dfile').addEventListener('change',async e=>{$('#dcount').textContent='Preparando fotos…';try{dimgs=await prepImages(e.target.files)}catch(_){dimgs=[]}$('#dcount').textContent=dimgs.length?'Listo para mirar ('+dimgs.length+(dimgs.length>1?' imágenes':' imagen')+')':'No pude abrir eso. Prueba otra vez.'});
+$('#dgo').onclick=async()=>{if(!dimgs.length&&!$('#dtext').value.trim()){$('#dcount').textContent='Toma una foto o un video, o dime qué te falta.';return}
   const b=$('#dgo');b.disabled=true;b.textContent='Mirando tus fotos…';$('#dres').innerHTML='<div class="bubble"><p>Mirando tus fotos… dame unos segunditos.</p></div>';
   try{const d=await askAI('/api/despensa',{images:dimgs,texto:$('#dtext').value,sano:$('#dsano').checked,catalog:S.products.filter(p=>p.ok).map(p=>({id:p.id,n:p.n,u:p.u}))});showDespensa(d)}
   catch(e){$('#dres').innerHTML=`<div class="bubble warn"><p>${esc(e.message)}</p></div>`}
