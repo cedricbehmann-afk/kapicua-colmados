@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es-DO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kapicua Te Lo Trae</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;800;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: claro, de confianza, sin letra chiquita — un vecino que te trae tu paquete
+   IDEA: la caja de cartón con su etiqueta de envío Miami → Santo Domingo
+   PICTURE: la calculadora como etiqueta de envío; el precio todo incluido grande sobre la caja
+   COLOUR and TYPE: cartón kraft, tinta negra, rojo y azul de correo aéreo; Archivo 900 + Inter
+   LAYOUT: título corto, calculadora y resultado lado a lado, cómo funciona, preguntas */
+:root{color-scheme:light dark;
+--bg:light-dark(#f6efe4,#15120e);--ink:light-dark(#16130f,#f4ecdf);--soft:light-dark(#6e604c,#c2b49c);
+--kraft:light-dark(#c99a62,#7a5a34);--kraftd:light-dark(#a87a45,#5e4426);--paper:light-dark(#fffdf8,#201b15);--line:light-dark(#e4d6c0,#3b3227);
+--red:#d7263d;--blue:#1d3f9e}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:Archivo,Inter,sans-serif;font-weight:900;line-height:1.05;text-wrap:balance;margin:0}
+h1{font-size:clamp(34px,6vw,52px)}h2{font-size:clamp(26px,4vw,34px);margin-bottom:16px}
+button,input,select{font:inherit;font-size:16px}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.band{padding:clamp(24px,4vw,56px) max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+.top{background:var(--kraft);color:#16130f;border-bottom:10px solid;border-image:repeating-linear-gradient(-45deg,var(--red) 0 18px,#fff 18px 30px,var(--blue) 30px 48px,#fff 48px 60px) 10}
+.top p{max-width:640px;font-size:18px;margin:12px 0 0}
+.brand{display:flex;align-items:center;gap:10px;font-family:Archivo;font-weight:800;margin-bottom:14px}
+.calc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(18px,3vw,36px);align-items:stretch}
+@media(max-width:760px){.calc{grid-template-columns:minmax(0,1fr)}}
+.label{background:var(--paper);border:2px solid var(--ink);border-radius:6px;padding:20px;position:relative}
+.label::before{content:"MIA  →  SDQ";position:absolute;top:-14px;left:16px;background:var(--ink);color:var(--bg);font:800 13px Archivo;letter-spacing:.04em;padding:4px 10px;border-radius:4px}
+label{display:block;font-weight:700;font-size:14px;margin:14px 0 4px}
+.field{width:100%;min-height:48px;border-radius:8px;border:2px solid var(--line);background:var(--bg);color:var(--ink);padding:10px 12px}
+.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.box{position:relative;background:var(--kraft);border-radius:8px;padding:24px;color:#16130f;display:flex;flex-direction:column;justify-content:space-between;min-height:340px;overflow:hidden}
+.box svg{position:absolute;right:14px;top:14px;width:min(30%,170px);pointer-events:none}
+.box>*{position:relative}
+.res{font-family:Archivo;font-weight:900;font-size:clamp(44px,8vw,76px);line-height:1;white-space:nowrap}
+.sub{font-weight:600;max-width:30ch}
+.pill{display:inline-block;background:#16130f;color:#f6efe4;border-radius:99px;padding:4px 12px;font-weight:700;font-size:14px;margin:4px 6px 0 0}
+.warn{background:#fff3c4;color:#5c4300;border-radius:8px;padding:10px 12px;font-weight:600;font-size:15px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 22px;border-radius:10px;border:0;background:var(--red);color:#fff;font-weight:800;text-decoration:none;font-size:17px;cursor:pointer}
+.btn.dark{background:#16130f;color:#f6efe4}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px}
+.step{background:var(--paper);border:2px solid var(--line);border-radius:10px;padding:18px}
+.step h3{font-size:20px;margin-bottom:6px}
+.step svg{width:46px;height:46px;margin-bottom:8px}
+details{background:var(--paper);border:2px solid var(--line);border-radius:10px;padding:0 18px;margin-bottom:10px}
+summary{cursor:pointer;font-weight:700;min-height:52px;display:flex;align-items:center}
+details p{margin:0 0 16px}
+.demo{font-size:13px;color:var(--soft)}
+footer{padding:28px max(5vw,16px);text-align:center;color:var(--soft);font-size:14px}
+/* config */
+#config{display:none}body.cfg #config{display:block}
+.ctab{width:100%;border-collapse:collapse}.ctab td{padding:8px 0;border-bottom:1px solid var(--line)}.ctab td:last-child{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:0 16px}
+</style>
+</head>
+<body>
+<header class="band top"><div class="wrap">
+  <div class="brand"><svg width="34" height="20" viewBox="0 0 34 20" aria-hidden="true"><rect x="1" y="1" width="32" height="18" rx="3" fill="#16130f"/><line x1="17" y1="3" x2="17" y2="17" stroke="#f6efe4" stroke-width="1.5"/><circle cx="9" cy="10" r="2" fill="#f6efe4"/><circle cx="22" cy="6" r="1.7" fill="#f6efe4"/><circle cx="25" cy="10" r="1.7" fill="#f6efe4"/><circle cx="28" cy="14" r="1.7" fill="#f6efe4"/></svg>Kapicua</div>
+  <h1>Tú lo eliges, nosotros te lo traemos</h1>
+  <p>Shein, Amazon, Temu o la tienda que quieras en EE.&nbsp;UU. Lo pagamos, lo traemos por courier y te lo llevamos a tu casa en Santo Domingo. Un solo precio, todo incluido.</p>
+</div></header>
+
+<main>
+<section class="band"><div class="wrap calc">
+  <form class="label" id="f" onsubmit="return false">
+    <h2 style="font-size:24px;margin:6px 0 0">Calcula tu precio</h2>
+    <label for="link">Link del producto (opcional)</label>
+    <input id="link" class="field" type="url" inputmode="url" placeholder="Pega aquí el link de Shein, Amazon…">
+    <div class="row2">
+      <div><label for="usd">Precio en la tienda (US$)</label><input id="usd" class="field" type="number" min="1" step="0.01" value="30"></div>
+      <div><label for="qty">Cantidad de artículos</label><input id="qty" class="field" type="number" min="1" step="1" value="1"></div>
+    </div>
+    <label for="kind">¿Qué es?</label>
+    <select id="kind" class="field"></select>
+    <label for="who">Tu nombre</label>
+    <input id="who" class="field" autocomplete="name" placeholder="Para el pedido">
+    <p class="demo">Si es un carrito con varias cosas, pon el total del carrito en dólares.</p>
+  </form>
+
+  <div class="box" aria-live="polite">
+    <svg viewBox="0 0 300 260" aria-hidden="true">
+      <path d="M40 90 L150 50 L270 90 L160 130Z" fill="#e0b47c"/>
+      <path d="M40 90 L160 130 L160 250 L40 205Z" fill="#b8844a"/>
+      <path d="M160 130 L270 90 L270 210 L160 250Z" fill="#a0713d"/>
+      <path d="M96 70 L208 112 L208 150 L96 108Z" fill="#d9c7a3" opacity=".9"/>
+      <rect x="62" y="140" width="72" height="44" transform="skewY(18)" fill="#fff" opacity=".92"/>
+      <path d="M66 164 h50 M66 172 h38" transform="skewY(18)" stroke="#16130f" stroke-width="3"/>
+      <path d="M182 150 l70 -26 M182 166 l70 -26" stroke="#d7263d" stroke-width="6" opacity=".8"/>
+    </svg>
+    <div>
+      <p style="margin:0;font-weight:700">Precio todo incluido</p>
+      <p class="res" id="total">RD$0</p>
+      <p class="sub" id="pay"></p>
+      <div><span class="pill" id="eta">Llega en 1 a 3 semanas</span><span class="pill">Delivery incluido</span></div>
+    </div>
+    <div>
+      <p class="warn" id="over" hidden>Más de US$200: este pedido puede pagar impuestos de aduana. Escríbenos y te damos el precio exacto antes de comprar.</p>
+      <p style="margin:14px 0 0"><a class="btn dark" id="order" href="#" rel="noopener">Pedir por WhatsApp</a></p>
+      <p class="demo" style="color:#3d3122;margin:8px 0 0">Precio estimado. Te confirmamos el precio final por WhatsApp antes de comprar.</p>
+    </div>
+  </div>
+</div></section>
+
+<section class="band" style="padding-top:0"><div class="wrap">
+  <h2>Así de fácil</h2>
+  <div class="steps">
+    <div class="step"><svg viewBox="0 0 46 46" aria-hidden="true"><rect x="6" y="4" width="34" height="38" rx="6" fill="var(--blue)"/><path d="M14 18h18M14 25h12" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>
+      <h3>Nos mandas el link</h3><p>Por WhatsApp, con talla, color y cantidad. Te confirmamos el precio todo incluido.</p></div>
+    <div class="step"><svg viewBox="0 0 46 46" aria-hidden="true"><circle cx="23" cy="23" r="19" fill="var(--red)"/><path d="M15 23l6 6 11-12" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <h3>Pagas la mitad</h3><p>Con el 50% compramos tu pedido. Te avisamos cuando llega a Miami y cuando sale para RD.</p></div>
+    <div class="step"><svg viewBox="0 0 46 46" aria-hidden="true"><path d="M6 16 L23 8 L40 16 L23 24Z" fill="#e0b47c"/><path d="M6 16 L23 24 V40 L6 32Z" fill="#b8844a"/><path d="M23 24 L40 16 V32 L23 40Z" fill="#a0713d"/></svg>
+      <h3>Lo recibes en tu casa</h3><p>Pagas el resto cuando te llega. Sin filas en el courier, sin sorpresas.</p></div>
+  </div>
+</div></section>
+
+<section class="band" style="padding-top:0"><div class="wrap">
+  <h2>Preguntas</h2>
+  <details><summary>¿Qué incluye el precio?</summary><p>El producto, el impuesto de la tienda en EE.&nbsp;UU., el envío hasta Miami, el courier hasta RD y el delivery a tu casa en Santo Domingo.</p></details>
+  <details><summary>¿Pago impuestos de aduana?</summary><p>Las compras personales de hasta US$200 normalmente no pagan impuestos de aduana en RD. Si tu pedido pasa de US$200, te decimos antes cuánto sería.</p></details>
+  <details><summary>¿Cuánto tarda?</summary><p>Casi siempre entre 1 y 3 semanas, según lo que tarde la tienda en mandarlo a Miami.</p></details>
+  <details><summary>¿Cómo pago?</summary><p>Por transferencia: 50% para hacer el pedido y 50% cuando lo recibes.</p></details>
+  <details><summary>¿Hay cosas que no se pueden traer?</summary><p>Sí: lo que prohíben la aduana o las aerolíneas (por ejemplo, armas, productos inflamables o baterías sueltas). Pregúntanos antes y te decimos.</p></details>
+  <details><summary>¿Y si llega mal o no es mi talla?</summary><p>Te ayudamos a hacer el reclamo con la tienda. Por eso revisamos contigo la talla y el modelo antes de comprar.</p></details>
+</div></section>
+
+<section class="band" id="config"><div class="wrap">
+  <h2>Ajustes (solo para Kapicua)</h2>
+  <p class="demo">Estos cambios solo se guardan en este teléfono. Para que tus clientes los vean, hay que fijarlos en la página.</p>
+  <div class="cgrid" id="cfgf"></div>
+  <h3 style="margin:22px 0 8px">Desglose del pedido de arriba</h3>
+  <table class="ctab" id="bd"></table>
+</div></section>
+</main>
+<footer>Kapicua · Pedidos por encargo · <a href="#config" style="color:inherit">Ajustes</a></footer>
+
+<script>
+{
+/* Valores por defecto — a confirmar con el courier elegido */
+const DEF={wa:'',rate:62,tax:7,lb:250,deliv:200,margin:15,minp:350,round:50};
+const KINDS=[['Ropa',1],['Zapatos',3],['Belleza y cuidado personal',1],['Accesorios y bisutería',.5],['Electrónica pequeña',2],['Hogar y cocina',4],['Juguetes',3],['Otro',2]];
+const NAMES={wa:'WhatsApp de Kapicua',rate:'Tasa US$ → RD$',tax:'Impuesto tienda EE. UU. (%)',lb:'Courier (RD$ por libra)',deliv:'Delivery en SD (RD$)',margin:'Ganancia (%)',minp:'Ganancia mínima (RD$)',round:'Redondear a (RD$)'};
+const $=s=>document.querySelector(s);
+const rd=n=>'RD$'+Math.round(n).toLocaleString('en-US');
+let C={...DEF};try{Object.assign(C,JSON.parse(localStorage.getItem('kapicua-trae-cfg')||'{}'))}catch(e){}
+$('#kind').innerHTML=KINDS.map(([k,w],i)=>`<option value="${i}">${k} (≈${w} lb c/u)</option>`).join('');
+$('#cfgf').innerHTML=Object.keys(DEF).map(k=>`<div><label for="c-${k}">${NAMES[k]}</label><input id="c-${k}" class="field" ${k==='wa'?'inputmode="tel" placeholder="18090000000"':'type="number" step="any"'} value="${C[k]}"></div>`).join('');
+function calc(){
+  const usd=Math.max(0,+$('#usd').value||0),q=Math.max(1,Math.round(+$('#qty').value||1)),[kn,w]=KINDS[+$('#kind').value];
+  const goods=usd*(1+C.tax/100)*C.rate;
+  const lbs=Math.max(1,Math.ceil(w*q));
+  const ship=lbs*C.lb,del=+C.deliv;
+  const gain=Math.max(goods*C.margin/100,+C.minp);
+  const r=+C.round||1;const total=Math.ceil((goods+ship+del+gain)/r)*r;
+  return{usd,q,kn,lbs,goods,ship,del,gain,total};
+}
+function render(){
+  const x=calc();
+  $('#total').textContent=x.usd?rd(x.total):'RD$0';
+  $('#pay').textContent=x.usd?`Pagas ${rd(Math.ceil(x.total/2))} para pedir y ${rd(x.total-Math.ceil(x.total/2))} cuando lo recibes.`:'Pon el precio en dólares para ver tu precio.';
+  $('#over').hidden=!(x.usd>200);
+  const msg=['¡Hola, Kapicua! Quiero hacer un pedido:',
+    $('#link').value?'Link: '+$('#link').value:'Link: (te lo mando ahora)',
+    `Precio en la tienda: US$${x.usd.toFixed(2)} · ${x.q} artículo(s) · ${x.kn}`,
+    `Precio estimado todo incluido: ${rd(x.total)}`].concat($('#who').value?['Nombre: '+$('#who').value]:[]);
+  $('#order').href='https://wa.me/'+String(C.wa).replace(/\D/g,'')+'?text='+encodeURIComponent(msg.join('\n'));
+  $('#bd').innerHTML=[['Producto + impuesto EE. UU. ('+C.tax+'%) × tasa '+C.rate,x.goods],[`Courier: ${x.lbs} lb × ${rd(C.lb)}`,x.ship],['Delivery en Santo Domingo',x.del],['Tu ganancia (antes de redondeo)',x.gain],['Precio al cliente (redondeado)',x.total],['Tu ganancia real',x.total-x.goods-x.ship-x.del]]
+    .map(([a,b],i)=>`<tr><td>${i>3?'<b>'+a+'</b>':a}</td><td>${i>3?'<b>'+rd(b)+'</b>':rd(b)}</td></tr>`).join('');
+}
+['#usd','#qty','#kind','#link','#who'].forEach(s=>$(s).addEventListener('input',render));
+$('#cfgf').addEventListener('input',e=>{const k=e.target.id.slice(2);C[k]=k==='wa'?e.target.value:+e.target.value;try{localStorage.setItem('kapicua-trae-cfg',JSON.stringify(C))}catch(_){}render()});
+function route(){document.body.classList.toggle('cfg',location.hash==='#config')}
+window.addEventListener('hashchange',route);route();render();
+}
+</script>
+</body>
+</html>
