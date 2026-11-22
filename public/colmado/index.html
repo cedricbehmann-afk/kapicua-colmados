@@ -440,7 +440,7 @@ function renderShop(){
 function card(p){
   const o=p.o&&p.o<p.p;
   const ph=p.img?`<div class="ph" style="background-image:url(${p.img})" role="img" aria-label="Foto de ${esc(p.n)}"></div>`:`<div class="ph" aria-hidden="true">${esc(p.n.charAt(0))}</div>`;
-  return `<article class="prod">${ph}${!p.ok?'<span class="tag gray">Agotado</span>':o?'<span class="tag">Oferta</span>':''}
+  return `<article class="prod">${ph}${!p.ok?'<span class="tag gray">Agotado</span>':o?`<span class="tag">Oferta · ahorras ${rd(p.p-p.o)}</span>`:''}
   <h3>${esc(p.n)}</h3><span class="unit">${esc(p.u)}</span>
   <div><span class="price">${rd(price(p))}</span>${o?`<span class="old">${rd(p.p)}</span>`:''}</div>
   <button class="btn small" data-add="${p.id}" ${p.ok&&S.open?'':'disabled'}>${p.ok?(S.open?'Añadir':'Cerrado'):'No hay'}</button></article>`;
@@ -625,7 +625,7 @@ function renderProducts(){
   $('#plist').innerHTML=S.products.filter(p=>!q||norm(p.n).includes(q)).map(p=>`<div class="prow" data-id="${p.id}">
    <span class="pn"><label class="thumb${p.img?' has':''}" ${p.img?`style="background-image:url(${p.img})"`:''} title="Foto de ${esc(p.n)}">${p.img?'':'+ Foto'}<input type="file" accept="image/*" data-f="img" aria-label="Foto de ${esc(p.n)}"></label><span><b>${esc(p.n)}</b> <span class="unit">· ${esc(p.u)} · ${esc(p.c)}</span></span></span>
    <label class="sw" style="margin:0">RD$ <input type="number" min="0" value="${p.p}" data-f="p" aria-label="Precio de ${esc(p.n)}"></label>
-   <label class="sw" style="margin:0">Oferta <input type="number" min="0" value="${p.o||''}" data-f="o" aria-label="Oferta de ${esc(p.n)}"></label>
+   <label class="sw" style="margin:0">Oferta RD$ <input type="number" min="0" placeholder="precio" value="${p.o||''}" data-f="o" aria-label="Oferta de ${esc(p.n)}"></label>
    <label class="sw" style="margin:0"><input type="checkbox" data-f="ok" ${p.ok?'checked':''}> Hay</label></div>`).join('')||'<p>No hay productos con ese nombre.</p>';
 }
 $('#pq').addEventListener('input',renderProducts);
