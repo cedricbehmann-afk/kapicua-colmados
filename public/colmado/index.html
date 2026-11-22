@@ -40,7 +40,8 @@ button{cursor:pointer}
 .intro{background:var(--blue);color:#fff}
 .intro .wrap{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:center;justify-content:space-between}
 .meta{margin:6px 0 0;color:#dbe5ff}
-.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:99px;font-weight:800;font-size:14px;background:#fff;color:var(--blue)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
+.chip{line-height:1.25;align-items:center;gap:6px;padding:4px 12px;border-radius:99px;font-weight:800;font-size:14px;background:#fff;color:var(--blue)}
 .chip.off{background:#ffd9dc;color:#8a1020}
 .dot{width:9px;height:9px;border-radius:50%;background:var(--green)}.off .dot{background:var(--red)}
 .btns{display:flex;flex-wrap:wrap;gap:10px}
@@ -62,6 +63,7 @@ button{cursor:pointer}
 .low{color:var(--red);font-weight:800}
 .stk{display:flex;align-items:center;gap:6px}.stk button{width:40px;height:40px;border-radius:10px;border:2px solid var(--line);background:var(--card);color:var(--ink);font-weight:800}
 .hist img{width:56px;height:56px;object-fit:cover;border-radius:8px;flex:none}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:10px}.kpi{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:14px}.kpi span{display:block;font-weight:800;font-size:14px;color:var(--soft)}.kpi b{font:400 clamp(26px,6vw,34px) "Lilita One",sans-serif;white-space:nowrap}.kpi.alert{border-color:var(--red)}
 .thumb{flex:none;width:64px;height:64px;border-radius:12px;border:2px dashed var(--line);background:var(--bg) center/cover no-repeat;display:grid;place-items:center;font-size:12px;font-weight:800;color:var(--soft);cursor:pointer;text-align:center;line-height:1.1}
 .thumb.has{border-style:solid}
 .thumb input{position:absolute;width:1px;height:1px;opacity:0}
@@ -198,8 +200,7 @@ body.admin .shop{display:none}body.admin .panel{display:block}
       <div>
         <h1 id="sname">Colmado</h1>
         <p class="meta"><span id="sbarrio"></span> · <span id="shours"></span></p>
-        <p style="margin:10px 0 0"><span id="schip" class="chip"><span class="dot"></span><span id="schiptxt">Abierto</span></span>
-        <span id="sdel" class="chip" style="margin-left:6px">Delivery gratis</span></p>
+        <div class="chips"><span id="schip" class="chip"><span class="dot"></span><span id="schiptxt">Abierto</span></span><span id="sdel" class="chip">Delivery gratis</span><span class="chip">Recoges tú en el colmado</span></div>
       </div>
       <div class="btns">
         <a id="swa" class="btn" href="#" rel="noopener">Pide por WhatsApp</a>
@@ -221,9 +222,10 @@ body.admin .shop{display:none}body.admin .panel{display:block}
         <h2>¿Qué te falta en la casa?</h2>
         <p>Tómale una foto a tu nevera, tu alacena o tus gavetas. Te decimos qué te hace falta de lo que tenemos aquí, y hasta cuándo comerte lo fresco.</p>
         <label class="btn filebtn">Tomar o subir fotos<input id="dfile" type="file" accept="image/*" multiple aria-label="Fotos de tu nevera o alacena"></label>
-        <p class="unit" id="dcount" style="margin:8px 0 0">Hasta 4 fotos.</p>
+        <p class="unit" id="dcount" style="margin:8px 0 0">Hasta 4 fotos (opcional).</p>
         <label for="dtext">¿Algo en especial? (opcional)</label>
-        <input id="dtext" class="field" placeholder="Ej.: me faltan las especias para el sancocho">
+        <div class="say"><input id="dtext" class="field" placeholder="Ej.: me faltan las especias para el sancocho"><button class="btn small" id="dmic" type="button" aria-label="Decirlo con la voz"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="2" width="6" height="12" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></button></div>
+        <p class="unit" id="dmichint" style="margin:6px 0 0">Puedes escribirlo o decirlo con el micrófono. La foto es opcional.</p>
         <label class="sw"><input type="checkbox" id="dsano"> Quiero comer un poquito más sano</label>
         <p><button class="btn red" id="dgo">Ver qué me falta</button></p>
         <p class="demo">Las fotos solo se usan para hacer tu lista. No se guardan.</p>
@@ -292,7 +294,8 @@ body.admin .shop{display:none}body.admin .panel{display:block}
 
   <div id="pbody" hidden>
     <nav class="tabs" role="tablist">
-      <button role="tab" data-v="hablar" aria-selected="true">Hablar</button>
+      <button role="tab" data-v="hoy" aria-selected="true">Hoy</button>
+      <button role="tab" data-v="hablar" aria-selected="false">Hablar</button>
       <button role="tab" data-v="productos">Productos</button>
       <button role="tab" data-v="inventario">Inventario</button>
       <button role="tab" data-v="fiao">Fiao</button>
@@ -301,7 +304,23 @@ body.admin .shop{display:none}body.admin .panel{display:block}
       <button role="tab" data-v="ajustes">Ajustes</button>
     </nav>
 
-    <section class="band view on" id="v-hablar"><div class="wrap talk">
+    <section class="band view on" id="v-hoy"><div class="wrap">
+      <div class="kpis">
+        <div class="kpi"><span>Vendido hoy</span><b id="h-v">RD$0</b></div>
+        <div class="kpi"><span>ITBIS incluido</span><b id="h-i">RD$0</b></div>
+        <div class="kpi"><span>Te deben (fiao)</span><b id="h-f">RD$0</b></div>
+        <div class="kpi" id="h-sk"><span>Se están acabando</span><b id="h-s">0</b></div>
+      </div>
+      <button class="btn red" data-go="hablar" style="width:100%;margin:16px 0">Toca aquí y dime qué cambiar</button>
+      <h2>Pendientes</h2>
+      <div class="rows" id="h-todo"></div>
+      <h2 style="margin-top:24px">Cierre del día</h2>
+      <p style="margin-top:0">Ventas, ITBIS, fiao y lo que hay que reponer, en un solo mensaje para tu contador o para facturar.</p>
+      <div class="btns"><a class="btn" id="h-wa" href="#" rel="noopener">Enviar a mi contador por WhatsApp</a><button class="btn ghost" id="h-copy">Copiar resumen</button></div>
+      <p class="demo" id="h-cnote"></p>
+    </div></section>
+
+    <section class="band view" id="v-hablar"><div class="wrap talk">
       <div>
         <button class="mic" id="mic" aria-label="Tocar y hablar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="2" width="6" height="12" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4M8 22h8"/></svg></button>
         <p class="miclabel" id="miclabel">Toca y dime qué cambiar</p>
@@ -407,6 +426,7 @@ body.admin .shop{display:none}body.admin .panel{display:block}
         <div><label for="s-wa">WhatsApp del colmado</label><input id="s-wa" class="field" inputmode="tel" placeholder="809 000 0000"></div>
         <div><label for="s-fee">Costo del delivery (RD$, 0 = gratis)</label><input id="s-fee" class="field" type="number" min="0"></div>
         <div><label for="s-rnc">RNC o cédula (para facturar)</label><input id="s-rnc" class="field" inputmode="numeric"></div>
+        <div><label for="s-contador">WhatsApp de tu contador (opcional)</label><input id="s-contador" class="field" inputmode="tel" placeholder="809 000 0000"></div>
         <div><label for="s-pin">PIN del panel</label><input id="s-pin" class="field" inputmode="numeric" maxlength="6"></div>
         <div>
           <label class="sw"><input type="checkbox" id="s-open"> Estamos abiertos</label>
@@ -484,8 +504,8 @@ function renderShop(){
   $('#signtxt').textContent=S.name.toUpperCase().slice(0,26);
   $('#sbarrio').textContent=S.barrio;$('#shours').textContent=S.hours;$('#shours2').textContent=S.hours;$('#saddr').textContent=S.address;
   $('#schip').className='chip'+(S.open?'':' off');$('#schiptxt').textContent=S.open?'Abierto ahora':'Cerrado ahora';
-  const del=(S.delivery?(+S.fee?'Delivery '+rd(S.fee):'Delivery gratis'):'Sin delivery ahora')+' · o lo recoges tú';
-  $('#sdel').textContent=del;$('#sdel2').textContent=S.delivery?del+' en el sector':'Por ahora solo en el colmado';
+  const del=S.delivery?(+S.fee?'Delivery '+rd(S.fee):'Delivery gratis'):'Sin delivery ahora';
+  $('#sdel').textContent=del;$('#sdel2').textContent=(S.delivery?del+' en el sector':'Por ahora sin delivery')+'. También puedes pedir aquí y pasar a buscarlo.';
   $('#swa').href=waLink('¡Saludos, '+S.name+'! Quiero hacer un pedido.');
   const tel=waNum();$('#stel').href=tel?'tel:+'+tel:'#';$('#stel').textContent=tel?'Llámanos: '+S.wa:'Llámanos';
   const off=S.products.filter(p=>p.o&&p.o<p.p&&p.ok);
@@ -525,8 +545,17 @@ document.addEventListener('click',e=>{
 });
 $('#q').addEventListener('input',renderShop);
 let dimgs=[];
+{let drec=null;const SRd=window.SpeechRecognition||window.webkitSpeechRecognition;
+ $('#dmic').onclick=()=>{if(drec){drec.stop();return}
+  if(!SRd){$('#dmichint').textContent='Toca la cajita y usa el micrófono de tu teclado.';$('#dtext').focus();return}
+  drec=new SRd();drec.lang='es-DO';drec.interimResults=true;const base=$('#dtext').value?$('#dtext').value+' ':'';
+  $('#dmic').style.background='var(--green)';$('#dmichint').textContent='Te escucho… dime qué te falta.';
+  drec.onresult=e=>{let t='';for(const r of e.results)t+=r[0].transcript;$('#dtext').value=base+t};
+  drec.onerror=e=>{$('#dmichint').textContent=/not-allowed|service/.test(e.error)?'No pude usar el micrófono. Usa el del teclado.':'No te escuché bien. Habla despacito y otra vez.'};
+  drec.onend=()=>{drec=null;$('#dmic').style.background='';if($('#dmichint').textContent.startsWith('Te escucho'))$('#dmichint').textContent='Listo. Toca «Ver qué me falta».'};
+  try{drec.start()}catch(_){drec=null;$('#dmic').style.background=''}}}
 $('#dfile').addEventListener('change',async e=>{$('#dcount').textContent='Preparando fotos…';try{dimgs=await prepImages(e.target.files)}catch(_){dimgs=[]}$('#dcount').textContent=dimgs.length?dimgs.length+(dimgs.length>1?' fotos listas':' foto lista'):'No pude abrir las fotos. Prueba otra vez.'});
-$('#dgo').onclick=async()=>{if(!dimgs.length){$('#dcount').textContent='Primero toma o sube una foto.';return}
+$('#dgo').onclick=async()=>{if(!dimgs.length&&!$('#dtext').value.trim()){$('#dcount').textContent='Toma una foto o dime qué te falta.';return}
   const b=$('#dgo');b.disabled=true;b.textContent='Mirando tus fotos…';$('#dres').innerHTML='<div class="bubble"><p>Mirando tus fotos… dame unos segunditos.</p></div>';
   try{const d=await askAI('/api/despensa',{images:dimgs,texto:$('#dtext').value,sano:$('#dsano').checked,catalog:S.products.filter(p=>p.ok).map(p=>({id:p.id,n:p.n,u:p.u}))});showDespensa(d)}
   catch(e){$('#dres').innerHTML=`<div class="bubble warn"><p>${esc(e.message)}</p></div>`}
@@ -579,6 +608,8 @@ const cap=s=>s.replace(/\b\w/g,c=>c.toUpperCase());
 
 function parse(raw){
   let t=clean(words2num(norm(raw)));if(!t)return null;let m;
+  if(/(resumen|cierre) del dia|cierra(?:r)? el dia|como vamos hoy|como va el dia/.test(t))return{type:'goHoy'};
+  if(/itbis/.test(t))return{type:'askItbis'};
   if(m=t.match(/cuanto (?:me )?debe (.+)$/))return{type:'askDebt',who:m[1]};
   if(/cuanto (?:vendi|vendimos|se vendio|llevamos|hemos vendido|he vendido)/.test(t))return{type:'askSales'};
   if(m=t.match(/^(?:fiale|fiao|fia|fiar)(?: a)? (.+?) (\d+(?:\.\d+)?)$/))return{type:'debt',who:m[1],amt:+m[2]};
@@ -609,6 +640,8 @@ const bal=f=>f.items.reduce((s,i)=>s+(i.k==='d'?i.amt:-i.amt),0);
 function plan(c){
   const NF=n=>({warn:`No encontré «${n}» en tu lista. Dímelo más despacito o búscalo en Productos.`});
   if(c.type==='askDebt'){const f=fGet(c.who);return{info:f?`${f.name} te debe ${rd(bal(f))}.`:`No tengo a «${cap(c.who)}» en la libreta del fiao.`}}
+  if(c.type==='goHoy'){go('hoy');return{info:'Te abrí el resumen del día.'}}
+  if(c.type==='askItbis'){const X=itbisOf(S.sales.filter(s=>s.t.startsWith(today())));const tot=X.r[16]+X.r[18];return{info:tot?`Hoy llevas ${rd(tot)} de ITBIS incluido en tus ventas por producto.`:'Hoy todavía no hay ITBIS en las ventas por producto.'}}
   if(c.type==='askSales'){const t=S.sales.filter(s=>s.t.startsWith(today())).reduce((a,s)=>a+s.amt,0);return{info:`Hoy llevas ${rd(t)} anotados en ventas.`}}
   if(c.type==='debt'||c.type==='pay'||c.type==='payall'){
     const f=fGet(c.who),who=f?f.name:cap(c.who),b=f?bal(f):0;
@@ -664,7 +697,7 @@ let tt;function toast(t){$('#toasttxt').textContent=t;$('#toast').classList.add(
 document.addEventListener('change',async e=>{const id=e.target.dataset&&e.target.dataset.newphoto;if(!id)return;const p=S.products.find(x=>x.id===id);const f=e.target.files&&e.target.files[0];if(!p||!f)return;try{p.img=await toPhoto(f);if(!save()){p.img=null;toast('No hay espacio para más fotos');return}renderAll();$('#reply').innerHTML=`<div class="bubble ok"><p>Foto puesta: ${esc(p.n)}</p></div>`}catch(_){toast('No pude abrir esa foto')}});
 $('#undo').onclick=()=>{if(undoSnap){S=JSON.parse(undoSnap);undoSnap=null;save();renderAll();$('#toast').classList.remove('show');reply('','Deshice el último cambio.')}};
 
-const EX=['Vendí 3 libras de arroz','El arroz a 40','Se acabó el pan','Ya llegó el hielo','Oferta de salami a 145','Agrega queso amarillo a 280','Doña Carmen me debe 500','Juancito pagó 200','¿Cuánto me debe Doña Carmen?','Anota venta de 1,250','Hoy no hay delivery','Cerramos'];
+const EX=['¿Cómo vamos hoy?','¿Cuánto ITBIS llevo?','Vendí 3 libras de arroz','El arroz a 40','Se acabó el pan','Ya llegó el hielo','Oferta de salami a 145','Agrega queso amarillo a 280','Doña Carmen me debe 500','Juancito pagó 200','¿Cuánto me debe Doña Carmen?','Anota venta de 1,250','Hoy no hay delivery','Cerramos'];
 $('#examples').innerHTML=EX.map(x=>`<li><button data-ex="${esc(x)}">«${esc(x)}»</button></li>`).join('');
 document.addEventListener('click',e=>{const b=e.target.closest('[data-ex]');if(b){$('#sayinput').value=b.dataset.ex;handle(b.dataset.ex,1)}});
 $('#sayform').onsubmit=e=>{e.preventDefault();handle($('#sayinput').value,1);$('#sayinput').value=''};
@@ -735,7 +768,7 @@ function renderSales(){
 }
 $('#vform').onsubmit=e=>{e.preventDefault();const a=+$('#vamt').value;if(a>0){undoSnap=JSON.stringify(S);plan({type:'sale',amt:a}).run();save();$('#vamt').value='';renderAll();toast('Venta anotada')}};
 
-const SET=['name','barrio','address','hours','wa','fee','rnc','pin'];
+const SET=['name','barrio','address','hours','wa','fee','rnc','contador','pin'];
 function renderSettings(){SET.forEach(k=>$('#s-'+k).value=S[k]??'');$('#s-open').checked=S.open;$('#s-delivery').checked=S.delivery;$('#s-voice').checked=S.voice;$('#pname').textContent=S.name}
 $('#saveset').onclick=()=>{undoSnap=JSON.stringify(S);SET.forEach(k=>S[k]=k==='fee'?+$('#s-fee').value||0:$('#s-'+k).value.trim());if(!S.pin)S.pin='1234';S.open=$('#s-open').checked;S.delivery=$('#s-delivery').checked;S.voice=$('#s-voice').checked;save();renderAll();toast('Ajustes guardados')};
 $('#resetdemo').onclick=()=>{undoSnap=JSON.stringify(S);S=JSON.parse(JSON.stringify(SAMPLE));S.products.forEach((p,i)=>p.id='p'+i);save();renderAll();toast('Demo restablecida')};
@@ -779,6 +812,35 @@ function showRev(){if(!irev)return;
     S.mov.push({t:nowStamp(),k,items,img:irev.thumb});irev=null;$('#irev').innerHTML='';
     if(!save()){S.mov[S.mov.length-1].img=null;save()}renderAll();toast(k==='conteo'?'Inventario actualizado':'Mercancía sumada')};
   const c=$('#icount'),i=$('#iin');if(c)c.onclick=()=>apply('conteo');if(i)i.onclick=()=>apply('entrada');}
+function go(v){const b=document.querySelector(`.tabs [data-v="${v}"]`);if(b)b.click();window.scrollTo(0,0)}
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){e.preventDefault();go(g.dataset.go)}});
+const fiaoTotal=()=>S.fiao.reduce((a,f)=>a+Math.max(0,bal(f)),0);
+const lowStock=()=>S.products.filter(p=>p.stock!=null&&p.stock<=3);
+function daySummary(){const td=S.sales.filter(s=>s.t.startsWith(today()));const X=itbisOf(td);const tot=td.reduce((a,s)=>a+s.amt,0);
+  const deb=S.fiao.map(f=>({n:f.name,b:bal(f)})).filter(x=>x.b>0).sort((a,b)=>b.b-a.b);
+  return [`${S.name} · cierre del ${today()}`,S.rnc?'RNC: '+S.rnc:'','',`Ventas: ${rd(tot)} (${td.length} ${td.length===1?'venta':'ventas'})`,
+    X.r[18]?`ITBIS 18%: ${rd(X.r[18])} (base ${rd(X.b[18])})`:'',X.r[16]?`ITBIS 16%: ${rd(X.r[16])} (base ${rd(X.b[16])})`:'',X.b[0]?`Exento: ${rd(X.b[0])}`:'',X.sin?`Ventas sin detalle de productos: ${rd(X.sin)}`:'',
+    '',`Fiao por cobrar: ${rd(fiaoTotal())}`,...deb.slice(0,8).map(x=>`  · ${x.n}: ${rd(x.b)}`),
+    lowStock().length?'':'',lowStock().length?'Reponer: '+lowStock().map(p=>`${p.n} (${p.stock})`).join(', '):''].filter((l,i,a)=>l!==''||(a[i-1]!==''&&i>0)).join('\n').trim()}
+function renderHoy(){
+  const td=S.sales.filter(s=>s.t.startsWith(today())),X=itbisOf(td);
+  $('#h-v').textContent=rd(td.reduce((a,s)=>a+s.amt,0));$('#h-i').textContent=rd(X.r[16]+X.r[18]);$('#h-f').textContent=rd(fiaoTotal());
+  const low=lowStock();$('#h-s').textContent=low.length;$('#h-sk').classList.toggle('alert',low.length>0);
+  const T=[];
+  if(!S.wa)T.push(['Pon el WhatsApp del colmado para recibir los pedidos','ajustes']);
+  if(!S.rnc)T.push(['Pon tu RNC o cédula para facturar','ajustes']);
+  const sinPrecio=S.products.filter(p=>!(p.p>0)).length;if(sinPrecio)T.push([`${sinPrecio} ${sinPrecio>1?'productos':'producto'} sin precio (no salen en tu página)`,'productos']);
+  if(low.length)T.push([`Reponer: ${low.slice(0,4).map(p=>p.n).join(', ')}${low.length>4?'…':''}`,'inventario']);
+  if(!S.mov.some(m=>m.k==='conteo'))T.push(['Cuenta tu mercancía con una foto (una vez y ya)','inventario']);
+  const sinFoto=S.products.filter(p=>!p.img&&p.p>0).length;if(sinFoto)T.push([`${sinFoto} productos sin foto: con foto tus clientes saben qué es`,'productos']);
+  if(td.length)T.push(['Factura las ventas de hoy en la DGII (gratis)','facturas']);
+  const top=S.fiao.map(f=>({n:f.name,b:bal(f)})).filter(x=>x.b>0).sort((a,b)=>b.b-a.b)[0];if(top)T.push([`Cobrar el fiao: ${top.n} te debe ${rd(top.b)}`,'fiao']);
+  $('#h-todo').innerHTML=T.length?T.map(([t,v])=>`<div class="line"><span class="n">${esc(t)}</span><button class="btn small" data-go="${v}">Hacerlo</button></div>`).join(''):'<p>Todo al día. ¡Bien hecho!</p>';
+  const num=(S.contador||'').replace(/\D/g,'').replace(/^(8[024]9\d{7})$/,'1$1');
+  $('#h-wa').href='https://wa.me/'+num+'?text='+encodeURIComponent(daySummary());
+  $('#h-cnote').textContent=num?'':'Tip: pon el WhatsApp de tu contador en Ajustes y le llega directo.';
+}
+$('#h-copy').onclick=()=>{const t=daySummary();try{navigator.clipboard.writeText(t).then(()=>toast('Resumen copiado'),()=>toast('No pude copiar'))}catch(e){toast('No pude copiar')}};
 function renderInvoices(){
   const td=S.sales.filter(s=>s.t.startsWith(today()));
   $('#frnc').textContent=S.rnc?'RNC/Cédula: '+S.rnc:'Pon tu RNC en Ajustes para tenerlo a mano.';
@@ -786,7 +848,7 @@ function renderInvoices(){
   $('#fsum').textContent=td.length?[S.name+' · ventas del '+today(),...td.map(s=>s.t.slice(11,16)+'  '+(s.items?s.items.map(i=>i.q+' × '+i.n+' ('+(i.tr?i.tr+'%':'exento')+')').join(', ')+'  ':'')+rd(s.amt)),'Total: '+rd(td.reduce((a,s)=>a+s.amt,0)),rt(18),rt(16),X.b[0]?'Exento: '+rd(X.b[0]):'',X.sin?'Ventas sin detalle de productos: '+rd(X.sin):''].filter(Boolean).join('\n'):'Todavía no has anotado ventas hoy. Dímelas en «Hablar»: «anota venta de 500».';
 }
 $('#fcopy').onclick=()=>{const t=$('#fsum').textContent;try{navigator.clipboard.writeText(t).then(()=>toast('Resumen copiado'),()=>toast('Mantén el dedo sobre el texto para copiarlo'))}catch(e){toast('Mantén el dedo sobre el texto para copiarlo')}};
-function renderAll(){renderShop();renderProducts();renderFiao();renderSales();renderSettings();renderInvoices();renderStock()}
+function renderAll(){renderShop();renderProducts();renderFiao();renderSales();renderSettings();renderInvoices();renderStock();renderHoy()}
 renderAll();route();
 }
 </script>

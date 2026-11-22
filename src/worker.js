@@ -56,6 +56,7 @@ async function vision(env, system, text, images) {
     });
     return parseJSON(out);
   } catch (e) {
+    if (!images.length) throw e;
     // Plan B: modelo de visión de una sola foto (pide aceptar la licencia la primera vez).
     const run = () => env.AI.run(BACKUP_MODEL, {
       messages: [{ role: "system", content: system }, { role: "user", content: text }],
@@ -73,14 +74,15 @@ async function vision(env, system, text, images) {
 }
 
 async function despensa(env, body) {
-  const images = cleanImages(body.images);
+  const wish = String(body.texto || "").slice(0, 400).trim();
+  const images = Array.isArray(body.images) && body.images.length ? cleanImages(body.images) : [];
+  if (!images.length && !wish) throw new Error("Toma una foto o dime qué te falta.");
   const catalog = cleanCatalog(body.catalog).filter((p) => p.ok);
   if (!catalog.length) throw new Error("El colmado no tiene productos disponibles ahora.");
-  const wish = String(body.texto || "").slice(0, 400);
   const healthy = !!body.sano;
   const system = "Eres el ayudante de un colmado dominicano. Hablas español sencillo, cálido y respetuoso. Respondes SOLO con JSON válido, sin texto extra.";
   const text = [
-    "Estas fotos son de la nevera, la alacena o las gavetas de un cliente.",
+    images.length ? "Estas fotos son de la nevera, la alacena o las gavetas de un cliente." : "El cliente no mandó fotos: guíate solo por lo que dice. Deja frescos vacío.",
     "1) Mira qué come normalmente, sin juzgar.",
     "2) Sugiere lo que le falta o se le está acabando, usando SOLO productos de este catálogo (usa su id). Máximo 8.",
     "3) Nunca menciones supermercados ni otras tiendas. Si algo no está en el catálogo, no lo sugieras.",
