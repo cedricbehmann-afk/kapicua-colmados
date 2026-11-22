@@ -22,7 +22,7 @@
 --bg:light-dark(#fff8e6,#12100c);--ink:light-dark(#1f1a12,#f7efdf);--soft:light-dark(#6b5d45,#c9b993);
 --card:light-dark(#ffffff,#1e1a14);--line:light-dark(#efe2c2,#3a3226);
 --sun:#ffc928;--blue:#1747b8;--red:#d62839;--green:#1f8a4c;
---wall:light-dark(#ffcf33,#e0a615);--sky:light-dark(#ffe9a6,#0d1a33);--street:light-dark(#d9cbb0,#2a2620)}
+--wall:light-dark(#ffcf33,#e0a615);--sky:light-dark(#ffd59a,#0d1a33);--sky2:light-dark(#fff1d6,#26345a);--street:light-dark(#d9cbb0,#2a2620)}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Nunito,system-ui,sans-serif;overflow-x:clip}
@@ -35,8 +35,8 @@ button{cursor:pointer}
 :focus-visible{outline:3px solid var(--blue);outline-offset:2px}
 .band{padding:clamp(22px,4vw,48px) max(5vw,16px)}
 .wrap{max-width:1240px;margin:0 auto}
-.hero{background:linear-gradient(var(--sky) 0 82%,#b9a988 82% 84.2%,var(--street) 84.2%)}
-.hero svg{display:block;width:100%;height:auto;max-height:440px;margin:0 auto}
+.hero{background:var(--sky2);overflow:hidden}
+.hero svg{display:block;width:100%;height:auto;max-height:440px;margin:0 auto;overflow:hidden}
 .intro{background:var(--blue);color:#fff}
 .intro .wrap{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:center;justify-content:space-between}
 .meta{margin:6px 0 0;color:#dbe5ff}
@@ -145,52 +145,89 @@ body.admin .shop{display:none}body.admin .panel{display:block}
   <header class="hero" aria-hidden="true">
     <svg id="scene" viewBox="0 0 800 380" preserveAspectRatio="xMidYMid meet">
       <defs>
-        <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6cf"/><stop offset="1" stop-color="#ffd76a"/></linearGradient>
-        <pattern id="stripes" width="44" height="10" patternUnits="userSpaceOnUse"><rect width="22" height="10" fill="#1747b8"/><rect x="22" width="22" height="10" fill="#fff"/></pattern>
+        <linearGradient id="skyg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--sky)"/><stop offset="1" stop-color="var(--sky2)"/></linearGradient>
+        <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3c2"/><stop offset="1" stop-color="#f6c95c"/></linearGradient>
+        <linearGradient id="wallshade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".18"/><stop offset=".12" stop-color="#000" stop-opacity="0"/><stop offset=".85" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".14"/></linearGradient>
+        <pattern id="louver" width="8" height="7" patternUnits="userSpaceOnUse"><rect width="8" height="7" fill="#1f4e79"/><rect y="4.5" width="8" height="2.5" fill="#163a5c"/></pattern>
+        <pattern id="grille" width="12" height="100" patternUnits="userSpaceOnUse"><rect x="5" width="2.4" height="100" fill="#26292e"/></pattern>
+        <clipPath id="door1"><path d="M306 316V206a44 44 0 0 1 88 0v110z"/></clipPath>
+        <clipPath id="door2"><path d="M412 316V206a44 44 0 0 1 88 0v110z"/></clipPath>
+        <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .07 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
       </defs>
-      <rect width="800" height="380" fill="var(--sky)"/>
-      <rect x="0" y="318" width="800" height="62" fill="var(--street)"/>
-      <rect x="0" y="312" width="800" height="8" fill="#b9a988"/>
-      <!-- edificio -->
-      <rect x="120" y="40" width="560" height="276" fill="var(--wall)"/>
-      <rect x="120" y="40" width="560" height="10" fill="#e7b31a"/>
-      <rect x="664" y="40" width="16" height="276" fill="#000" opacity=".08"/>
-      <!-- letrero -->
-      <rect x="160" y="58" width="480" height="70" rx="10" fill="#d62839"/>
-      <rect x="168" y="66" width="464" height="54" rx="6" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="2 7" stroke-linecap="round"/>
-      <text id="signtxt" class="sign" x="400" y="106" text-anchor="middle" font-size="36" fill="#fff">COLMADO</text>
-      <!-- toldo -->
-      <rect x="140" y="138" width="520" height="34" fill="url(#stripes)"/>
-      <path id="scallop" fill="url(#stripes)"/>
-      <!-- puerta y estantes -->
-      <rect x="250" y="190" width="300" height="126" fill="url(#glow)"/>
+      <rect x="-800" width="2400" height="380" fill="url(#skyg)"/>
+      <rect x="-620" y="104" width="330" height="216" fill="#f2c14e"/><rect x="-620" y="98" width="330" height="12" fill="#f4efe6"/>
+      <rect x="-290" y="84" width="290" height="236" fill="#7fc8e8"/><rect x="-290" y="78" width="290" height="12" fill="#f4efe6"/>
+      <path d="M-200 316V190a30 30 0 0 1 60 0v126z" fill="#f4efe6"/><path d="M-193 316V192a23 23 0 0 1 46 0v124z" fill="url(#louver)"/>
+      <rect x="-90" y="170" width="60" height="80" fill="#f4efe6"/><rect x="-84" y="176" width="48" height="68" fill="#2a2d33"/><rect x="-84" y="176" width="48" height="68" fill="url(#grille)"/>
+      <rect x="800" y="88" width="300" height="232" fill="#f19bb5"/><rect x="800" y="82" width="300" height="12" fill="#f4efe6"/>
+      <path d="M880 316V188a30 30 0 0 1 60 0v128z" fill="#f4efe6"/><path d="M887 316V190a23 23 0 0 1 46 0v126z" fill="url(#louver)"/>
+      <rect x="990" y="168" width="60" height="80" fill="#f4efe6"/><rect x="996" y="174" width="48" height="68" fill="#2a2d33"/><rect x="996" y="174" width="48" height="68" fill="url(#grille)"/>
+      <rect x="1100" y="100" width="320" height="220" fill="#e8735a"/><rect x="1100" y="94" width="320" height="12" fill="#f4efe6"/>
+      <!-- casas vecinas -->
+      <rect x="0" y="92" width="152" height="228" fill="#e8735a"/>
+      <rect x="0" y="86" width="152" height="12" fill="#f4efe6"/>
+      <path d="M44 316V178a26 26 0 0 1 52 0v138z" fill="#f4efe6"/><path d="M50 316V180a20 20 0 0 1 40 0v136z" fill="url(#louver)"/>
+      <rect x="648" y="100" width="152" height="220" fill="#f2c14e"/>
+      <rect x="648" y="94" width="152" height="12" fill="#f4efe6"/>
+      <rect x="690" y="166" width="66" height="86" fill="#f4efe6"/><rect x="696" y="172" width="54" height="74" fill="#2a2d33"/><rect x="696" y="172" width="54" height="74" fill="url(#grille)"/>
+      <!-- colmado -->
+      <rect x="150" y="70" width="500" height="250" fill="#2bb3b1"/>
+      <rect x="150" y="70" width="500" height="250" filter="url(#grain)" fill="#2bb3b1"/>
+      <rect x="150" y="70" width="500" height="250" fill="url(#wallshade)"/>
+      <rect x="140" y="58" width="520" height="16" fill="#f4efe6"/><rect x="146" y="74" width="508" height="6" fill="#d9d1c3"/>
+      <rect x="150" y="80" width="500" height="5" fill="#000" opacity=".12"/>
+      <rect x="150" y="304" width="500" height="16" fill="#1e8d8b"/>
+      <!-- letrero pintado -->
+      <rect x="232" y="94" width="336" height="58" rx="6" fill="#fff3d6"/>
+      <rect x="232" y="146" width="336" height="6" fill="#000" opacity=".1"/>
+      <text id="signtxt" class="sign" x="400" y="129" text-anchor="middle" font-size="30" fill="#c8302c">COLMADO</text>
+      <text x="400" y="145" text-anchor="middle" font-size="11" font-weight="800" fill="#1f4e79" font-family="Nunito,sans-serif" letter-spacing="1">DELIVERY · PICADERA · BIEN FRÍA</text>
+      <!-- ventanas con rejas -->
+      <path d="M176 284V196a35 35 0 0 1 70 0v88z" fill="#f4efe6"/><path d="M183 280V198a28 28 0 0 1 56 0v82z" fill="#24262b"/><path d="M183 280V198a28 28 0 0 1 56 0v82z" fill="url(#grille)"/>
+      <rect x="183" y="236" width="56" height="3" fill="#26292e"/>
+      <path d="M554 284V196a35 35 0 0 1 70 0v88z" fill="#f4efe6"/><path d="M561 280V198a28 28 0 0 1 56 0v82z" fill="#24262b"/><path d="M561 280V198a28 28 0 0 1 56 0v82z" fill="url(#grille)"/>
+      <rect x="561" y="236" width="56" height="3" fill="#26292e"/>
+      <rect x="172" y="282" width="78" height="6" fill="#e4dccd"/><rect x="550" y="282" width="78" height="6" fill="#e4dccd"/>
+      <!-- puertas abiertas -->
+      <path d="M298 318V204a52 52 0 0 1 104 0v114z" fill="#f4efe6"/>
+      <path d="M404 318V204a52 52 0 0 1 104 0v114z" fill="#f4efe6"/>
+      <rect x="306" y="160" width="88" height="158" fill="url(#glow)" clip-path="url(#door1)"/>
+      <rect x="412" y="160" width="88" height="158" fill="url(#glow)" clip-path="url(#door2)"/>
       <g id="shelf"></g>
-      <rect x="236" y="272" width="328" height="44" rx="4" fill="#8a4b22"/>
-      <rect x="236" y="272" width="328" height="7" fill="#a8622f"/>
-      <!-- plátanos -->
-      <g transform="translate(178 186)">
-        <line x1="20" y1="-14" x2="20" y2="8" stroke="#5b3a1a" stroke-width="3"/>
-        <path d="M6 10 q14 6 30 0 l-4 46 q-11 6 -22 0z" fill="#7fae2a"/>
-        <path d="M10 18 q-10 18 -2 36M20 16 q-4 22 0 40M30 18 q10 18 2 36" stroke="#4f7a14" stroke-width="3" fill="none"/>
-      </g>
-      <g transform="translate(588 186)">
-        <line x1="20" y1="-14" x2="20" y2="8" stroke="#5b3a1a" stroke-width="3"/>
-        <path d="M6 10 q14 6 30 0 l-4 46 q-11 6 -22 0z" fill="#f2c230"/>
-        <path d="M10 18 q-10 18 -2 36M20 16 q-4 22 0 40M30 18 q10 18 2 36" stroke="#c48d10" stroke-width="3" fill="none"/>
-      </g>
-      <!-- cajas de refresco -->
+      <g clip-path="url(#door2)"><rect x="412" y="262" width="88" height="56" fill="#8a4b22"/><rect x="412" y="262" width="88" height="6" fill="#a8622f"/><rect x="424" y="240" width="22" height="22" rx="3" fill="#e9eef2" opacity=".9"/><rect x="452" y="246" width="34" height="16" rx="2" fill="#d62839"/></g>
+      <path d="M286 318V214l12-6v110z" fill="url(#louver)"/><path d="M402 318V208l-8 4v106z" fill="#163a5c" opacity=".6"/>
+      <path d="M520 318V214l-12-6v110z" fill="url(#louver)"/>
+      <rect x="296" y="316" width="108" height="4" fill="#cfc6b6"/><rect x="402" y="316" width="108" height="4" fill="#cfc6b6"/>
+      <!-- farol -->
+      <g transform="translate(400 160)"><path d="M-2 0h4v10h-4z" fill="#26292e"/><path d="M-10 10h20l-3 22h-14z" fill="#26292e"/><path d="M-7 13h14l-2 16h-10z" fill="#ffd76a"/><circle cx="0" cy="21" r="16" fill="#ffd76a" opacity=".18"/></g>
+      <!-- trinitaria (buganvilla) -->
+      <g id="flowers"></g>
+      <!-- cables -->
+      <path d="M-600 30 Q-300 70 0 22 Q200 70 400 30 T800 26 Q1100 70 1400 30" stroke="#2a2a2a" stroke-width="1.6" fill="none" opacity=".75"/>
+      <path d="M-600 50 Q-260 90 0 36 Q260 86 520 40 T800 46 Q1100 90 1400 44" stroke="#2a2a2a" stroke-width="1.2" fill="none" opacity=".6"/>
+      <!-- acera y calle de adoquines -->
+      <rect x="-800" y="318" width="2400" height="16" fill="#d8ccb5"/><rect x="-800" y="332" width="2400" height="4" fill="#a99a80"/>
+      <rect x="-800" y="336" width="2400" height="44" fill="var(--street)"/>
+      <g id="cobbles"></g>
+      <!-- cajas de cerveza -->
       <g id="crates"></g>
-      <!-- bombillos -->
-      <g id="bulbs"></g>
+      <!-- mesa de dominó y sillas -->
+      <g transform="translate(560 270)">
+        <ellipse cx="34" cy="54" rx="70" ry="6" fill="#000" opacity=".18"/>
+        <path d="M-6 18h22l4 34h-4l-4-26h-12l-3 26h-4z" fill="#d62839"/><rect x="-8" y="-6" width="24" height="26" rx="5" fill="#d62839"/>
+        <rect x="8" y="16" width="52" height="5" rx="2" fill="#f4efe6"/><path d="M14 21l-4 31h3l5-31zM54 21l4 31h-3l-5-31z" fill="#e4dccd"/>
+        <rect x="16" y="12" width="9" height="4" rx="1" fill="#fff" stroke="#333" stroke-width=".6"/><rect x="28" y="12" width="9" height="4" rx="1" fill="#fff" stroke="#333" stroke-width=".6"/><rect x="40" y="11" width="9" height="4" rx="1" fill="#fff" stroke="#333" stroke-width=".6"/>
+        <path d="M74 18h-22l-4 34h4l4-26h12l3 26h4z" fill="#f4efe6"/><rect x="52" y="-6" width="24" height="26" rx="5" fill="#f4efe6"/>
+      </g>
       <!-- motor del delivery -->
-      <g transform="translate(36 248)">
-        <ellipse cx="62" cy="70" rx="64" ry="6" fill="#000" opacity=".15"/>
-        <circle cx="22" cy="54" r="16" fill="#222"/><circle cx="22" cy="54" r="7" fill="#999"/>
-        <circle cx="102" cy="54" r="16" fill="#222"/><circle cx="102" cy="54" r="7" fill="#999"/>
-        <path d="M22 54 L44 30 H80 L102 54 Z" fill="#d62839"/>
-        <path d="M78 30 L92 8" stroke="#333" stroke-width="5" stroke-linecap="round"/>
-        <rect x="-12" y="2" width="62" height="36" rx="5" fill="#1747b8"/>
-        <text x="19" y="26" text-anchor="middle" font-size="10" font-weight="800" fill="#fff" font-family="Nunito,sans-serif">DELIVERY</text>
+      <g transform="translate(30 286)">
+        <ellipse cx="62" cy="62" rx="66" ry="6" fill="#000" opacity=".2"/>
+        <circle cx="22" cy="48" r="15" fill="#1d1d1f"/><circle cx="22" cy="48" r="6" fill="#a7a9ac"/>
+        <circle cx="104" cy="48" r="15" fill="#1d1d1f"/><circle cx="104" cy="48" r="6" fill="#a7a9ac"/>
+        <path d="M22 48 L44 26 H84 L104 48 Z" fill="#c8302c"/><path d="M44 26h40l-6-8H50z" fill="#9e2420"/>
+        <path d="M82 26 L96 4" stroke="#333" stroke-width="5" stroke-linecap="round"/><path d="M90 4h14" stroke="#333" stroke-width="4" stroke-linecap="round"/>
+        <rect x="-14" y="0" width="64" height="34" rx="5" fill="#1747b8"/><rect x="-14" y="28" width="64" height="6" fill="#0f3591"/>
+        <text x="18" y="22" text-anchor="middle" font-size="10" font-weight="800" fill="#fff" font-family="Nunito,sans-serif">DELIVERY</text>
       </g>
     </svg>
   </header>
@@ -226,7 +263,6 @@ body.admin .shop{display:none}body.admin .panel{display:block}
         <label for="dtext">¿Algo en especial? (opcional)</label>
         <div class="say"><input id="dtext" class="field" placeholder="Ej.: me faltan las especias para el sancocho"><button class="btn small" id="dmic" type="button" aria-label="Decirlo con la voz"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="2" width="6" height="12" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></button></div>
         <p class="unit" id="dmichint" style="margin:6px 0 0">Puedes escribirlo o decirlo con el micrófono. La foto o el video son opcionales.</p>
-        <label class="sw"><input type="checkbox" id="dsano"> Quiero comer un poquito más sano</label>
         <p><button class="btn red" id="dgo">Ver qué me falta</button></p>
         <p class="demo">Las fotos y videos solo se usan para hacer tu lista. No se guardan.</p>
       </div>
@@ -487,16 +523,22 @@ const price=p=>p.o&&p.o<p.p?p.o:p.p;
 
 /* ---------- escena ---------- */
 {
-  let sc='M140 172';for(let x=140;x<660;x+=26)sc+=` q13 18 26 0`;$('#scallop').setAttribute('d',sc+' V172Z');
-  const cols=['#d62839','#1747b8','#1f8a4c','#ff8a00','#7b2cbf','#00a6a6','#f2c230'];let g='';
-  [[200,40],[226,32],[250,32]].forEach(([y,h],r)=>{g+=`<rect x="256" y="${y+h-2}" width="288" height="4" fill="#8a4b22"/>`;for(let i=0;i<11;i++){const w=18+(i*7+r*5)%9,hh=h-6-(i*3+r)%8;g+=`<rect x="${262+i*25}" y="${y+h-2-hh}" width="${w}" height="${hh}" rx="2" fill="${cols[(i+r*3)%7]}"/>`}});
+  let seed=11;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+  const cols=['#d62839','#1747b8','#1f8a4c','#ff8a00','#7b2cbf','#00a6a6','#f2c230','#e9eef2'];let g='';
+  [[306,'door1'],[412,'door2']].forEach(([x0,cp],d)=>{g+=`<g clip-path="url(#${cp})">`;
+    [[186,26],[216,26],[246,24]].forEach(([y,h],r)=>{if(d===1&&r===2)return;g+=`<rect x="${x0}" y="${y+h}" width="88" height="4" fill="#7a4520"/>`;
+      let x=x0+3;while(x<x0+84){const w=7+Math.floor(rnd()*8),hh=h-4-Math.floor(rnd()*9);g+=`<rect x="${x}" y="${y+h-hh}" width="${w}" height="${hh}" rx="1.5" fill="${cols[Math.floor(rnd()*cols.length)]}"/>`;x+=w+2}});
+    if(d===0)g+=`<g transform="translate(${x0+58} 186)"><path d="M0 0q14 6 28 0l-4 40q-10 5-20 0z" fill="#8bb82e"/><path d="M6 6q-6 16 0 30M14 4v36M22 6q6 16 0 30" stroke="#5c8418" stroke-width="2" fill="none"/></g>`;
+    g+='</g>'});
   $('#shelf').innerHTML=g;
-  let c='';[[580,262],[580,286],[612,286],[148,286]].forEach(([x,y],i)=>{c+=`<rect x="${x}" y="${y}" width="30" height="24" rx="3" fill="${i%2?'#1f8a4c':'#d62839'}"/><rect x="${x+4}" y="${y+4}" width="22" height="5" fill="#000" opacity=".2"/>`});
+  let c='';[[226,288],[226,264],[256,288]].forEach(([x,y],i)=>{c+=`<rect x="${x}" y="${y}" width="30" height="24" rx="3" fill="${i===2?'#1f8a4c':'#2a7a3b'}"/><rect x="${x+3}" y="${y+3}" width="24" height="6" fill="#000" opacity=".25"/>`;for(let k=0;k<4;k++)c+=`<rect x="${x+4+k*6}" y="${y-6}" width="4" height="9" rx="1.5" fill="#6b3d12"/>`});
   $('#crates').innerHTML=c;
-  let b='<path d="M120 36 Q400 70 680 36" stroke="#333" stroke-width="2" fill="none"/>';for(let i=1;i<14;i++){const x=120+i*40,y=36+34*Math.sin(Math.PI*i/14)*0.95;b+=`<circle cx="${x}" cy="${y+6}" r="5" fill="${['#ff5a5f','#ffd23f','#3ddc97','#5aa9ff'][i%4]}"/>`}
-  $('#bulbs').innerHTML=b;
+  let cb='';for(let r=0;r<5;r++){const y=338+r*9;for(let x=(r%2)*11-811;x<1600;x+=22)cb+=`<rect x="${x+1}" y="${y}" width="20" height="7.5" rx="3" fill="${rnd()>.5?'#9c8a70':'#8b7a62'}" opacity=".75"/>`}
+  $('#cobbles').innerHTML=cb;
+  let f='<path d="M150 60c-10 30-4 70 10 104M170 60c4 26 0 52-6 70" stroke="#4f7d2a" stroke-width="3" fill="none"/>';
+  for(let i=0;i<70;i++){const t=rnd(),x=140+rnd()*80-(t*20),y=52+t*130*rnd()+rnd()*20;const pink=rnd()>.28;f+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(3+rnd()*4).toFixed(1)}" fill="${pink?(rnd()>.5?'#e0287d':'#c2186b'):'#4f8a2b'}"/>`}
+  $('#flowers').innerHTML=f;
 }
-
 /* ---------- tienda ---------- */
 let cat='Todo',cart={};
 function renderShop(){
@@ -557,7 +599,7 @@ let dimgs=[];
 $('#dfile').addEventListener('change',async e=>{$('#dcount').textContent='Preparando fotos…';try{dimgs=await prepImages(e.target.files)}catch(_){dimgs=[]}$('#dcount').textContent=dimgs.length?'Listo para mirar ('+dimgs.length+(dimgs.length>1?' imágenes':' imagen')+')':'No pude abrir eso. Prueba otra vez.'});
 $('#dgo').onclick=async()=>{if(!dimgs.length&&!$('#dtext').value.trim()){$('#dcount').textContent='Toma una foto o un video, o dime qué te falta.';return}
   const b=$('#dgo');b.disabled=true;b.textContent='Mirando tus fotos…';$('#dres').innerHTML='<div class="bubble"><p>Mirando tus fotos… dame unos segunditos.</p></div>';
-  try{const d=await askAI('/api/despensa',{images:dimgs,texto:$('#dtext').value,sano:$('#dsano').checked,catalog:S.products.filter(p=>p.ok).map(p=>({id:p.id,n:p.n,u:p.u}))});showDespensa(d)}
+  try{const d=await askAI('/api/despensa',{images:dimgs,texto:$('#dtext').value,sano:false,catalog:S.products.filter(p=>p.ok).map(p=>({id:p.id,n:p.n,u:p.u}))});showDespensa(d)}
   catch(e){$('#dres').innerHTML=`<div class="bubble warn"><p>${esc(e.message)}</p></div>`}
   b.disabled=false;b.textContent='Ver qué me falta'};
 function showDespensa(d){
