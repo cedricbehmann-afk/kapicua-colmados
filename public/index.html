@@ -9,664 +9,85 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="icon" href="/icon-192.png">
-<title>Colmado El Bacano</title>
+<title>Mi Colmado</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
-/* VOICE: alegre, de barrio, directo — un colmado dominicano que se siente cerca
-   IDEA: el letrero pintado a mano y la libreta del colmado (precios, fiao) hechos web
-   PICTURE: la fachada del colmado con toldo, estantes, plátanos colgando y el delivery en su motor
-   COLOUR and TYPE: amarillo pared, azul toldo, rojo letrero; Lilita One de letrero + Nunito
-   LAYOUT: fachada a todo lo ancho, nombre y botones, catálogo en tarjetas; panel del dueño con un micrófono grande */
-:root{color-scheme:light dark;
---bg:light-dark(#fff8e6,#12100c);--ink:light-dark(#1f1a12,#f7efdf);--soft:light-dark(#6b5d45,#c9b993);
---card:light-dark(#ffffff,#1e1a14);--line:light-dark(#efe2c2,#3a3226);
---sun:#ffc928;--blue:#1747b8;--red:#d62839;--green:#1f8a4c;
---wall:light-dark(#ffcf33,#e0a615);--sky:light-dark(#ffe9a6,#0d1a33);--street:light-dark(#d9cbb0,#2a2620)}
+/* VOICE: directo y alegre, como llegar al colmado del barrio
+   IDEA: el letrero del colmado + las ruedas para elegir zona y colmado
+   PICTURE: toldo de rayas azul y blanco sobre el letrero rojo con el nombre elegido
+   COLOUR and TYPE: azul toldo, amarillo pared, rojo letrero; Lilita One + Nunito
+   LAYOUT: letrero arriba, dos ruedas, y luego las dos puertas: pedir o panel del dueño */
+:root{color-scheme:light dark;--bg:light-dark(#fff8e6,#12100c);--ink:light-dark(#1f1a12,#f7efdf);--soft:light-dark(#6b5d45,#c9b993);
+--card:light-dark(#fff,#1e1a14);--line:light-dark(#efe2c2,#3a3226);--sun:#ffc928;--blue:#1747b8;--red:#d62839}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Nunito,system-ui,sans-serif;overflow-x:clip}
-h1,h2,h3,.sign{font-family:"Lilita One",Impact,sans-serif;font-weight:400;line-height:1.05;text-wrap:balance}
-h1{font-size:clamp(34px,6vw,52px);margin:0}
-h2{font-size:clamp(26px,4vw,34px);margin:0 0 14px}
-a{color:inherit}
-button,input,select,textarea{font:inherit;font-size:16px}
-button{cursor:pointer}
+h1,h2{font-family:"Lilita One",Impact,sans-serif;font-weight:400;line-height:1.05;margin:0;text-wrap:balance}
+.top{background:var(--sun);padding:0 0 28px}
+.awning{height:46px;background:repeating-linear-gradient(90deg,var(--blue) 0 34px,#fff 34px 68px);-webkit-mask:radial-gradient(17px at 17px 100%,#0000 98%,#000) 0 0/34px 100%;mask:radial-gradient(17px at 17px 100%,#0000 98%,#000) 0 0/34px 100%}
+.sign{margin:22px auto 0;width:min(560px,calc(100% - 32px));background:var(--red);color:#fff;border-radius:14px;padding:16px 18px;text-align:center;box-shadow:0 8px 0 rgba(0,0,0,.15)}
+.sign small{display:block;font-weight:800;opacity:.9;margin-bottom:4px}
+.sign h1{font-size:clamp(30px,7vw,46px)}
+main{width:min(560px,calc(100% - 32px));margin:24px auto 40px}
+label{display:block;font-weight:800;margin:16px 0 6px}
+select{width:100%;min-height:56px;border-radius:14px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:700 18px Nunito,sans-serif;padding:0 14px}
 :focus-visible{outline:3px solid var(--blue);outline-offset:2px}
-.band{padding:clamp(22px,4vw,48px) max(5vw,16px)}
-.wrap{max-width:1240px;margin:0 auto}
-.hero{background:linear-gradient(var(--sky) 0 82%,#b9a988 82% 84.2%,var(--street) 84.2%)}
-.hero svg{display:block;width:100%;height:auto;max-height:440px;margin:0 auto}
-.intro{background:var(--blue);color:#fff}
-.intro .wrap{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:center;justify-content:space-between}
-.meta{margin:6px 0 0;color:#dbe5ff}
-.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:99px;font-weight:800;font-size:14px;background:#fff;color:var(--blue)}
-.chip.off{background:#ffd9dc;color:#8a1020}
-.dot{width:9px;height:9px;border-radius:50%;background:var(--green)}.off .dot{background:var(--red)}
-.btns{display:flex;flex-wrap:wrap;gap:10px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 20px;border-radius:14px;border:0;font-weight:800;text-decoration:none;background:var(--sun);color:#1f1a12}
-.btn.red{background:var(--red);color:#fff}.btn.ghost{background:transparent;color:inherit;border:2px solid currentColor}
-.btn.small{min-height:44px;padding:0 14px;font-size:15px}
-.btn[disabled]{opacity:.45;cursor:not-allowed}
-.tools{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
-.tools input{flex:1 1 220px;min-height:48px;border-radius:14px;border:2px solid var(--line);background:var(--card);color:var(--ink);padding:0 14px}
-.cat{min-height:44px;padding:0 14px;border-radius:99px;border:2px solid var(--line);background:var(--card);color:var(--ink);font-weight:800}
-.cat[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,150px),1fr));gap:12px}
-.prod{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:6px}
-.prod h3{font-family:Nunito,sans-serif;font-weight:800;font-size:17px;margin:0}
-.unit{color:var(--soft);font-size:14px}
-.price{font-family:"Lilita One",sans-serif;font-size:26px;white-space:nowrap}
-.old{color:var(--soft);text-decoration:line-through;font-size:15px;margin-left:6px;white-space:nowrap}
-.tag{align-self:flex-start;font-size:13px;font-weight:800;padding:2px 10px;border-radius:99px;background:var(--red);color:#fff}
-.tag.gray{background:var(--line);color:var(--soft)}
-.prod .btn{margin-top:auto}
-.offers{background:var(--red);color:#fff}
-.offers .grid .prod{background:#fff;color:#1f1a12;border-color:#fff}
-.offers .unit,.offers .old{color:#7a6a50}
-.info{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px}
-.info div{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:16px}
-.info b{display:block;font-size:14px;color:var(--soft)}
-footer{padding:28px max(5vw,16px) 110px;color:var(--soft);font-size:14px;text-align:center}
-.cartbar{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);width:min(560px,calc(100% - 24px));display:none;z-index:20}
-.cartbar.show{display:block}
-.cartbar button{width:100%;justify-content:space-between;box-shadow:0 10px 30px rgba(0,0,0,.25)}
-.sheet{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center;z-index:30}
-.sheet.show{display:flex}
-.sheet>div{background:var(--bg);width:min(620px,100%);max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:20px}
-.line{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
-.line .n{flex:1}
-.qty{display:flex;align-items:center;gap:6px}
-.qty button{width:44px;height:44px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);font-weight:800}
-.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
-label{display:block;font-weight:800;font-size:14px;margin:12px 0 4px}
-.field{width:100%;min-height:48px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);padding:10px 12px}
-.demo{font-size:13px;color:var(--soft);margin:10px 0 0}
-/* panel */
-.panel{display:none}
-body.admin .shop{display:none}body.admin .panel{display:block}
-.ptop{background:var(--ink);color:var(--bg)}
-.ptop .wrap{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
-.tabs{display:flex;gap:6px;overflow-x:auto;padding:12px max(5vw,16px);border-bottom:2px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
-.tabs button{flex:none;min-height:44px;padding:0 16px;border-radius:99px;border:2px solid var(--line);background:var(--card);color:var(--ink);font-weight:800}
-.tabs button[aria-selected=true]{background:var(--blue);border-color:var(--blue);color:#fff}
-.view{display:none}.view.on{display:block}
-.talk{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start}
-@media(max-width:760px){.talk{grid-template-columns:minmax(0,1fr)}}
-.mic{width:min(220px,60vw);aspect-ratio:1;border-radius:50%;border:0;background:var(--red);color:#fff;display:grid;place-items:center;margin:8px auto 14px;box-shadow:0 0 0 10px light-dark(#ffd9dc,#4a1a20)}
-.mic svg{width:42%;height:42%}
-.mic.on{background:var(--green);box-shadow:0 0 0 10px light-dark(#c8f0d6,#173b27)}
-@media(prefers-reduced-motion:no-preference){.mic.on{animation:pulse 1.2s ease-in-out infinite}}
-@keyframes pulse{50%{box-shadow:0 0 0 22px light-dark(#c8f0d6,#173b27)}}
-.miclabel{text-align:center;font-weight:800;font-size:18px;margin:0}
-.live{min-height:56px;text-align:center;color:var(--soft);font-style:italic;margin:8px 0 14px}
-.say{display:flex;gap:8px}.say input{flex:1}
-.bubble{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:16px;margin:0 0 12px}
-.bubble.warn{border-color:var(--sun);background:light-dark(#fff3c4,#3a3010)}
-.bubble.ok{border-color:var(--green)}
-.bubble p{margin:0 0 10px;font-size:17px}
-.ex{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
-.ex button{min-height:44px;padding:0 12px;border-radius:12px;border:2px dashed var(--line);background:transparent;color:var(--ink);text-align:left}
-.rows{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:4px 14px}
-.prow{display:grid;grid-template-columns:minmax(0,1fr) 110px 110px auto;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
-.prow:last-child,.line:last-child{border-bottom:0}
-.prow input{min-height:44px;width:100%;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink);padding:0 8px;text-align:right}
-.sw{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:14px;min-height:44px}
-.sw input{width:22px;height:22px}
-@media(max-width:600px){.prow{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.prow .pn{grid-column:1/-1}}
-.big{font-family:"Lilita One",sans-serif;font-size:clamp(36px,8vw,56px);line-height:1;white-space:nowrap}
-.bar{height:26px;background:var(--line);border-radius:8px;overflow:hidden}.bar i{display:block;height:100%;background:var(--blue)}
-.week .line{display:grid;grid-template-columns:70px minmax(0,1fr) 110px}
-.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 12px 10px 18px;border-radius:14px;display:none;gap:12px;align-items:center;z-index:40;width:max-content;max-width:calc(100% - 24px)}
-.toast.show{display:flex}
-.toast button{min-height:40px;border-radius:10px;border:0;background:var(--sun);color:#1f1a12;font-weight:800;padding:0 12px}
-.gate{max-width:420px;margin:0 auto;text-align:center}
-.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:18px}
+.doors{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-top:22px}
+@media(max-width:420px){.doors{grid-template-columns:minmax(0,1fr)}}
+.door{display:flex;flex-direction:column;gap:6px;justify-content:flex-end;min-height:130px;border-radius:18px;padding:18px;text-decoration:none;font-weight:700}
+.door b{font-family:"Lilita One",sans-serif;font-weight:400;font-size:24px;line-height:1.1}
+.door.shop{background:var(--blue);color:#fff}.door.owner{background:var(--card);color:var(--ink);border:2px solid var(--ink)}
+.door[aria-disabled=true]{opacity:.4;pointer-events:none}
+.note{color:var(--soft);font-size:14px;margin-top:18px}
 </style>
 </head>
 <body>
-
-<!-- ============ TIENDA ============ -->
-<div class="shop">
-  <header class="hero" aria-hidden="true">
-    <svg id="scene" viewBox="0 0 800 380" preserveAspectRatio="xMidYMid meet">
-      <defs>
-        <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6cf"/><stop offset="1" stop-color="#ffd76a"/></linearGradient>
-        <pattern id="stripes" width="44" height="10" patternUnits="userSpaceOnUse"><rect width="22" height="10" fill="#1747b8"/><rect x="22" width="22" height="10" fill="#fff"/></pattern>
-      </defs>
-      <rect width="800" height="380" fill="var(--sky)"/>
-      <rect x="0" y="318" width="800" height="62" fill="var(--street)"/>
-      <rect x="0" y="312" width="800" height="8" fill="#b9a988"/>
-      <!-- edificio -->
-      <rect x="120" y="40" width="560" height="276" fill="var(--wall)"/>
-      <rect x="120" y="40" width="560" height="10" fill="#e7b31a"/>
-      <rect x="664" y="40" width="16" height="276" fill="#000" opacity=".08"/>
-      <!-- letrero -->
-      <rect x="160" y="58" width="480" height="70" rx="10" fill="#d62839"/>
-      <rect x="168" y="66" width="464" height="54" rx="6" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="2 7" stroke-linecap="round"/>
-      <text id="signtxt" class="sign" x="400" y="106" text-anchor="middle" font-size="36" fill="#fff">COLMADO</text>
-      <!-- toldo -->
-      <rect x="140" y="138" width="520" height="34" fill="url(#stripes)"/>
-      <path id="scallop" fill="url(#stripes)"/>
-      <!-- puerta y estantes -->
-      <rect x="250" y="190" width="300" height="126" fill="url(#glow)"/>
-      <g id="shelf"></g>
-      <rect x="236" y="272" width="328" height="44" rx="4" fill="#8a4b22"/>
-      <rect x="236" y="272" width="328" height="7" fill="#a8622f"/>
-      <!-- plátanos -->
-      <g transform="translate(178 186)">
-        <line x1="20" y1="-14" x2="20" y2="8" stroke="#5b3a1a" stroke-width="3"/>
-        <path d="M6 10 q14 6 30 0 l-4 46 q-11 6 -22 0z" fill="#7fae2a"/>
-        <path d="M10 18 q-10 18 -2 36M20 16 q-4 22 0 40M30 18 q10 18 2 36" stroke="#4f7a14" stroke-width="3" fill="none"/>
-      </g>
-      <g transform="translate(588 186)">
-        <line x1="20" y1="-14" x2="20" y2="8" stroke="#5b3a1a" stroke-width="3"/>
-        <path d="M6 10 q14 6 30 0 l-4 46 q-11 6 -22 0z" fill="#f2c230"/>
-        <path d="M10 18 q-10 18 -2 36M20 16 q-4 22 0 40M30 18 q10 18 2 36" stroke="#c48d10" stroke-width="3" fill="none"/>
-      </g>
-      <!-- cajas de refresco -->
-      <g id="crates"></g>
-      <!-- bombillos -->
-      <g id="bulbs"></g>
-      <!-- motor del delivery -->
-      <g transform="translate(36 248)">
-        <ellipse cx="62" cy="70" rx="64" ry="6" fill="#000" opacity=".15"/>
-        <circle cx="22" cy="54" r="16" fill="#222"/><circle cx="22" cy="54" r="7" fill="#999"/>
-        <circle cx="102" cy="54" r="16" fill="#222"/><circle cx="102" cy="54" r="7" fill="#999"/>
-        <path d="M22 54 L44 30 H80 L102 54 Z" fill="#d62839"/>
-        <path d="M78 30 L92 8" stroke="#333" stroke-width="5" stroke-linecap="round"/>
-        <rect x="-12" y="2" width="62" height="36" rx="5" fill="#1747b8"/>
-        <text x="19" y="26" text-anchor="middle" font-size="10" font-weight="800" fill="#fff" font-family="Nunito,sans-serif">DELIVERY</text>
-      </g>
-    </svg>
-  </header>
-
-  <section class="band intro">
-    <div class="wrap">
-      <div>
-        <h1 id="sname">Colmado</h1>
-        <p class="meta"><span id="sbarrio"></span> · <span id="shours"></span></p>
-        <p style="margin:10px 0 0"><span id="schip" class="chip"><span class="dot"></span><span id="schiptxt">Abierto</span></span>
-        <span id="sdel" class="chip" style="margin-left:6px">Delivery gratis</span></p>
-      </div>
-      <div class="btns">
-        <a id="swa" class="btn" href="#" rel="noopener">Pide por WhatsApp</a>
-        <a id="stel" class="btn ghost" href="#">Llámanos</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="band offers" id="offersband">
-    <div class="wrap">
-      <h2>Ofertas de hoy</h2>
-      <div class="grid" id="offers"></div>
-    </div>
-  </section>
-
-  <section class="band">
-    <div class="wrap">
-      <h2>Lo que tenemos</h2>
-      <div class="tools">
-        <input id="q" type="search" placeholder="Busca: arroz, salami, hielo..." aria-label="Buscar producto">
-      </div>
-      <div class="tools" id="cats" role="group" aria-label="Categorías"></div>
-      <div class="grid" id="catalog"></div>
-      <p class="demo">Versión de demostración: nombre, dirección y precios son de ejemplo.</p>
-    </div>
-  </section>
-
-  <section class="band" style="padding-top:0">
-    <div class="wrap info">
-      <div><b>Dirección</b><span id="saddr"></span></div>
-      <div><b>Horario</b><span id="shours2"></span></div>
-      <div><b>Delivery</b><span id="sdel2"></span></div>
-      <div><b>Pagos</b>Efectivo y transferencia</div>
-    </div>
-  </section>
-
-  <footer>Página creada por Kapicua · <a href="#panel">Entrar al panel del dueño</a></footer>
-
-  <div class="cartbar" id="cartbar"><button class="btn red" id="opencart"><span id="cartcount">0 productos</span><span>Ver pedido · <span id="carttotal">RD$0</span></span></button></div>
-
-  <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Tu pedido">
-    <div>
-      <div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0">Tu pedido</h2><button class="btn ghost small" id="closecart">Cerrar</button></div>
-      <div id="cartlines"></div>
-      <p class="num" style="font-weight:800;font-size:18px">Total: <span id="carttotal2"></span></p>
-      <label for="cname">Tu nombre</label><input id="cname" class="field" autocomplete="name">
-      <label for="caddr">Dirección para el delivery</label><input id="caddr" class="field" autocomplete="street-address" placeholder="Calle, número, referencia">
-      <label for="cnote">Nota (opcional)</label><input id="cnote" class="field" placeholder="Ej.: el pan bien tostadito">
-      <p><a class="btn" id="sendorder" href="#" rel="noopener" style="width:100%">Enviar pedido por WhatsApp</a></p>
-    </div>
+<header class="top">
+  <div class="awning" aria-hidden="true"></div>
+  <div class="sign"><small id="zonelbl">Elige tu colmado</small><h1 id="cname">Mi Colmado</h1></div>
+</header>
+<main>
+  <label for="zone">1. Tu zona</label>
+  <select id="zone"><option>Cargando…</option></select>
+  <label for="colm">2. Tu colmado</label>
+  <select id="colm"></select>
+  <div class="doors">
+    <a class="door shop" id="toshop" href="#"><b>Hacer un pedido</b>Ver productos y pedir por WhatsApp</a>
+    <a class="door owner" id="toowner" href="#"><b>Soy el dueño</b>Entrar a mi panel</a>
   </div>
-</div>
-
-<!-- ============ PANEL DEL DUEÑO ============ -->
-<div class="panel">
-  <section class="band ptop"><div class="wrap">
-    <div><h1 style="font-size:clamp(28px,5vw,40px)">Panel de <span id="pname"></span></h1><p style="margin:4px 0 0;opacity:.8">Maneja tu colmado hablando o tocando</p></div>
-    <a class="btn small" href="#tienda">Ver mi página</a>
-  </div></section>
-
-  <div id="gate" class="band"><div class="gate">
-    <h2>Entra con tu PIN</h2>
-    <input id="pin" class="field" inputmode="numeric" type="password" maxlength="6" aria-label="PIN" style="text-align:center;font-size:24px;letter-spacing:8px">
-    <p><button class="btn" id="pinok" style="width:100%">Entrar</button></p>
-    <p class="demo" id="pinmsg">En esta demo el PIN es 1234.</p>
-  </div></div>
-
-  <div id="pbody" hidden>
-    <nav class="tabs" role="tablist">
-      <button role="tab" data-v="hablar" aria-selected="true">Hablar</button>
-      <button role="tab" data-v="productos">Productos</button>
-      <button role="tab" data-v="fiao">Fiao</button>
-      <button role="tab" data-v="ventas">Ventas</button>
-      <button role="tab" data-v="facturas">Facturas</button>
-      <button role="tab" data-v="ajustes">Ajustes</button>
-    </nav>
-
-    <section class="band view on" id="v-hablar"><div class="wrap talk">
-      <div>
-        <button class="mic" id="mic" aria-label="Tocar y hablar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="2" width="6" height="12" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4M8 22h8"/></svg></button>
-        <p class="miclabel" id="miclabel">Toca y dime qué cambiar</p>
-        <p class="live" id="live">Habla tranquilo, como siempre.</p>
-        <form class="say" id="sayform"><input id="sayinput" class="field" placeholder="O escríbelo aquí: el arroz a 40" aria-label="Escribir orden"><button class="btn small">Enviar</button></form>
-        <p class="demo" id="michint"></p>
-      </div>
-      <div>
-        <div id="reply"></div>
-        <div class="bubble">
-          <p style="font-weight:800">Puedes decirme cosas como:</p>
-          <ul class="ex" id="examples"></ul>
-        </div>
-      </div>
-    </div></section>
-
-    <section class="band view" id="v-productos"><div class="wrap">
-      <div class="tools"><input id="pq" type="search" placeholder="Buscar en mis productos" aria-label="Buscar en mis productos"></div>
-      <div class="rows" id="plist"></div>
-      <h2 style="margin-top:24px">Agregar producto</h2>
-      <form id="addform" class="two">
-        <div><label for="an">Nombre</label><input id="an" class="field" required placeholder="Ej.: Queso amarillo"></div>
-        <div><label for="au">Unidad</label><input id="au" class="field" placeholder="libra, unidad, paquete"></div>
-        <div><label for="ap">Precio (RD$)</label><input id="ap" class="field" type="number" min="0" step="1" required></div>
-        <div><label for="ac">Categoría</label><select id="ac" class="field"></select></div>
-        <div><button class="btn" style="width:100%;margin-top:30px">Agregar</button></div>
-      </form>
-    </div></section>
-
-    <section class="band view" id="v-fiao"><div class="wrap two">
-      <div>
-        <p style="margin:0;color:var(--soft);font-weight:800">Te deben en total</p>
-        <p class="big" id="ftotal">RD$0</p>
-        <div class="rows" id="flist" style="margin-top:14px"></div>
-      </div>
-      <form id="fform" class="bubble">
-        <h2>Anotar en la libreta</h2>
-        <label for="fwho">Cliente</label><input id="fwho" class="field" list="fnames" required placeholder="Ej.: Doña Carmen"><datalist id="fnames"></datalist>
-        <label for="famt">Monto (RD$)</label><input id="famt" class="field" type="number" min="1" required>
-        <div class="btns" style="margin-top:14px"><button class="btn red" data-k="d">Me debe</button><button class="btn" data-k="p">Pagó / abonó</button></div>
-      </form>
-    </div></section>
-
-    <section class="band view" id="v-ventas"><div class="wrap two">
-      <div>
-        <p style="margin:0;color:var(--soft);font-weight:800">Vendido hoy</p>
-        <p class="big" id="vtoday">RD$0</p>
-        <form id="vform" class="say" style="margin-top:14px"><input id="vamt" class="field" type="number" min="1" placeholder="Monto de la venta" aria-label="Monto de la venta"><button class="btn small">Anotar</button></form>
-        <div class="rows" id="vlist" style="margin-top:14px"></div>
-      </div>
-      <div><h2>Últimos 7 días</h2><div class="rows week" id="vweek"></div></div>
-    </div></section>
-
-    <section class="band view" id="v-facturas"><div class="wrap two">
-      <div>
-        <h2>Factura electrónica (e-CF)</h2>
-        <p>Desde el 15 de noviembre de 2026 la DGII exige la factura electrónica a los negocios pequeños y micro que tienen RNC. Lo puedes hacer gratis con el <b>Facturador Gratuito de la DGII</b>.</p>
-        <div class="rows">
-          <div class="line"><span class="n"><b>1. Pide el acceso</b><br>Entra a tu Oficina Virtual (OFV) de la DGII → <i>Solicitudes</i> → <i>Facturador Gratuito</i> y envía el formulario.</span></div>
-          <div class="line"><span class="n"><b>2. Ten tu certificado digital</b><br>Lo pide la DGII para firmar las facturas. La guía de abajo te dice cómo sacarlo.</span></div>
-          <div class="line"><span class="n"><b>3. Factura</b><br>Entra al portal con tu RNC y factura. Aquí abajo tienes tus ventas de hoy listas para copiar.</span></div>
-        </div>
-        <p class="btns" style="margin-top:16px">
-          <a class="btn" href="https://fg.dgii.gov.do/ecf/PortalFG/login1" target="_blank" rel="noopener">Entrar al Facturador Gratuito</a>
-          <a class="btn ghost" href="https://dgii.gov.do/cicloContribuyente/facturacion/comprobantesFiscalesElectronicosE-CF/Paginas/Facturador-Gratuito.aspx" target="_blank" rel="noopener">Guía de la DGII</a>
-        </p>
-        <p class="demo">Ayuda de la DGII: (809) 689-3444, opción 4 · facturacionelectronica@dgii.gov.do</p>
-      </div>
-      <div class="bubble">
-        <h2 style="font-size:24px">Ventas de hoy para facturar</h2>
-        <p class="unit" id="frnc"></p>
-        <pre id="fsum" style="white-space:pre-wrap;font:15px/1.5 Nunito,sans-serif;margin:0 0 12px"></pre>
-        <button class="btn" id="fcopy">Copiar resumen</button>
-      </div>
-    </div></section>
-
-    <section class="band view" id="v-ajustes"><div class="wrap">
-      <form id="setform" class="two">
-        <div><label for="s-name">Nombre del colmado</label><input id="s-name" class="field"></div>
-        <div><label for="s-barrio">Sector</label><input id="s-barrio" class="field"></div>
-        <div><label for="s-address">Dirección</label><input id="s-address" class="field"></div>
-        <div><label for="s-hours">Horario</label><input id="s-hours" class="field"></div>
-        <div><label for="s-wa">WhatsApp del colmado</label><input id="s-wa" class="field" inputmode="tel" placeholder="809 000 0000"></div>
-        <div><label for="s-fee">Costo del delivery (RD$, 0 = gratis)</label><input id="s-fee" class="field" type="number" min="0"></div>
-        <div><label for="s-rnc">RNC o cédula (para facturar)</label><input id="s-rnc" class="field" inputmode="numeric"></div>
-        <div><label for="s-pin">PIN del panel</label><input id="s-pin" class="field" inputmode="numeric" maxlength="6"></div>
-        <div>
-          <label class="sw"><input type="checkbox" id="s-open"> Estamos abiertos</label>
-          <label class="sw"><input type="checkbox" id="s-delivery"> Hay delivery</label>
-          <label class="sw"><input type="checkbox" id="s-voice"> Que el panel me conteste en voz alta</label>
-        </div>
-      </form>
-      <p class="btns" style="margin-top:20px"><button class="btn" id="saveset">Guardar cambios</button><button class="btn ghost" id="resetdemo">Volver a la demo original</button></p>
-      <div class="bubble" style="margin-top:20px">
-        <h2 style="font-size:24px">Ponla en tu pantalla como una app</h2>
-        <p><b>Android (Chrome):</b> toca el menú ⋮ → <i>Agregar a la pantalla principal</i>.<br><b>iPhone (Safari):</b> toca Compartir → <i>Agregar a inicio</i>.</p>
-        <p class="unit" style="margin:0">Así abres tu panel con un toque, igual que una app.</p>
-      </div>
-      <p class="demo">Ayuda: si algo no funciona, escríbele a Kapicua. Plan anual RD$5,000: incluye la app descargable y todas las intervenciones. Sin plan: intervención RD$2,000 · app descargable RD$2,000.</p>
-    </div></section>
-  </div>
-</div>
-
-<div class="toast" id="toast"><span id="toasttxt"></span><button id="undo">Deshacer</button></div>
-
+  <p class="note">Aquí salen los colmados que ya están inscritos. ¿Tu colmado no está? Pídele al dueño que se inscriba.</p>
+</main>
 <script>
 {
-const KEY='kapicua-colmado-demo-v1';
-const CATS=['Víveres','Carnes y embutidos','Bebidas','Limpieza','Picadera'];
-const P=(n,u,c,p,o)=>({n,u,c,p,ok:true,o:o||null});
-const SAMPLE={name:'Colmado El Bacano',barrio:'Villa Consuelo, Santo Domingo',address:'Calle Ejemplo #12, esquina Principal',hours:'Lun a Dom · 7:00 a. m. – 10:00 p. m.',open:true,delivery:true,fee:0,wa:'',voice:true,pin:'1234',
-products:[P('Arroz','libra','Víveres',38),P('Habichuelas rojas','libra','Víveres',95),P('Azúcar crema','libra','Víveres',42),P('Aceite','litro','Víveres',230),P('Espaguetis','paquete','Víveres',45),P('Plátano','unidad','Víveres',30),P('Huevos','unidad','Víveres',10),P('Pan de agua','unidad','Víveres',10),P('Café molido','paquete','Víveres',75),P('Leche','litro','Víveres',80),P('Sardinas','lata','Víveres',75),P('Sopita','sobre','Víveres',10),
-P('Salami','libra','Carnes y embutidos',160,150),P('Queso de freír','libra','Carnes y embutidos',260),P('Pollo','libra','Carnes y embutidos',95),P('Salchichas','paquete','Carnes y embutidos',120),
-P('Cerveza grande','fría','Bebidas',200,190),P('Refresco','2 litros','Bebidas',130),P('Agua','botellón','Bebidas',80),P('Jugo','caja','Bebidas',60),P('Hielo','funda','Bebidas',60),
-P('Cloro','galón','Limpieza',150),P('Detergente','funda','Limpieza',90),P('Jabón de cuaba','unidad','Limpieza',45),P('Papel de baño','rollo','Limpieza',30),
-P('Galletas','paquete','Picadera',25),P('Platanitos','funda','Picadera',40),P('Chicharrón','funda','Picadera',60),P('Maní','funda','Picadera',30)],
-fiao:[{name:'Doña Carmen',items:[{k:'d',amt:850,t:'2026-11-20'},{k:'p',amt:300,t:'2026-11-21'}]},{name:'Juancito',items:[{k:'d',amt:420,t:'2026-11-21'}]}],
-sales:[]};
-const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const rd=n=>'RD$'+Math.round(n).toLocaleString('en-US');
-const today=()=>new Date().toLocaleDateString('en-CA');
-let S;
-try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
-if(!S||!S.products)S=JSON.parse(JSON.stringify(SAMPLE));
-S.products.forEach((p,i)=>p.id=p.id||'p'+i+'_'+Math.random().toString(36).slice(2,6));
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
-const waNum=()=>(S.wa||'').replace(/\D/g,'').replace(/^(8[024]9\d{7})$/,'1$1');
-const waLink=t=>'https://wa.me/'+waNum()+'?text='+encodeURIComponent(t);
-const price=p=>p.o&&p.o<p.p?p.o:p.p;
-
-/* ---------- escena ---------- */
-{
-  let sc='M140 172';for(let x=140;x<660;x+=26)sc+=` q13 18 26 0`;$('#scallop').setAttribute('d',sc+' V172Z');
-  const cols=['#d62839','#1747b8','#1f8a4c','#ff8a00','#7b2cbf','#00a6a6','#f2c230'];let g='';
-  [[200,40],[226,32],[250,32]].forEach(([y,h],r)=>{g+=`<rect x="256" y="${y+h-2}" width="288" height="4" fill="#8a4b22"/>`;for(let i=0;i<11;i++){const w=18+(i*7+r*5)%9,hh=h-6-(i*3+r)%8;g+=`<rect x="${262+i*25}" y="${y+h-2-hh}" width="${w}" height="${hh}" rx="2" fill="${cols[(i+r*3)%7]}"/>`}});
-  $('#shelf').innerHTML=g;
-  let c='';[[580,262],[580,286],[612,286],[148,286]].forEach(([x,y],i)=>{c+=`<rect x="${x}" y="${y}" width="30" height="24" rx="3" fill="${i%2?'#1f8a4c':'#d62839'}"/><rect x="${x+4}" y="${y+4}" width="22" height="5" fill="#000" opacity=".2"/>`});
-  $('#crates').innerHTML=c;
-  let b='<path d="M120 36 Q400 70 680 36" stroke="#333" stroke-width="2" fill="none"/>';for(let i=1;i<14;i++){const x=120+i*40,y=36+34*Math.sin(Math.PI*i/14)*0.95;b+=`<circle cx="${x}" cy="${y+6}" r="5" fill="${['#ff5a5f','#ffd23f','#3ddc97','#5aa9ff'][i%4]}"/>`}
-  $('#bulbs').innerHTML=b;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let list=[],last={};
+try{last=JSON.parse(localStorage.getItem('mi-colmado-last')||'{}')}catch(e){}
+function zones(){return[...new Set(list.map(c=>c.zona))].sort((a,b)=>a.localeCompare(b,'es'))}
+function fillColm(){
+  const z=$('#zone').value,cs=list.filter(c=>c.zona===z).sort((a,b)=>a.nombre.localeCompare(b.nombre,'es'));
+  $('#colm').innerHTML=cs.map(c=>`<option value="${esc(c.slug)}">${esc(c.nombre)}</option>`).join('');
+  if(cs.some(c=>c.slug===last.slug))$('#colm').value=last.slug;
+  pick();
 }
-
-/* ---------- tienda ---------- */
-let cat='Todo',cart={};
-function renderShop(){
-  $('#sname').textContent=S.name;document.title=S.name;
-  $('#signtxt').textContent=S.name.toUpperCase().slice(0,26);
-  $('#sbarrio').textContent=S.barrio;$('#shours').textContent=S.hours;$('#shours2').textContent=S.hours;$('#saddr').textContent=S.address;
-  $('#schip').className='chip'+(S.open?'':' off');$('#schiptxt').textContent=S.open?'Abierto ahora':'Cerrado ahora';
-  const del=S.delivery?(+S.fee?'Delivery '+rd(S.fee):'Delivery gratis'):'Sin delivery ahora';
-  $('#sdel').textContent=del;$('#sdel2').textContent=S.delivery?del+' en el sector':'Por ahora solo en el colmado';
-  $('#swa').href=waLink('¡Saludos, '+S.name+'! Quiero hacer un pedido.');
-  const tel=waNum();$('#stel').href=tel?'tel:+'+tel:'#';$('#stel').textContent=tel?'Llámanos: '+S.wa:'Llámanos';
-  const off=S.products.filter(p=>p.o&&p.o<p.p&&p.ok);
-  $('#offersband').hidden=!off.length;$('#offers').innerHTML=off.map(card).join('');
-  $('#cats').innerHTML=['Todo',...CATS].map(c=>`<button class="cat" aria-pressed="${c===cat}" data-c="${esc(c)}">${esc(c)}</button>`).join('');
-  const q=norm($('#q').value);
-  const list=S.products.filter(p=>(cat==='Todo'||p.c===cat)&&(!q||norm(p.n).includes(q)));
-  $('#catalog').innerHTML=list.length?list.map(card).join(''):'<p>No encontramos ese producto. Pregúntanos por WhatsApp, a lo mejor lo tenemos.</p>';
-  renderCart();
+function pick(){
+  const c=list.find(x=>x.slug===$('#colm').value);
+  $('#cname').textContent=c?c.nombre:'Mi Colmado';$('#zonelbl').textContent=c?c.zona:'Elige tu colmado';
+  ['#toshop','#toowner'].forEach(s=>$(s).setAttribute('aria-disabled',!c));
+  if(!c)return;
+  const base='/colmado/?c='+encodeURIComponent(c.slug);
+  $('#toshop').href=base+'#tienda';$('#toowner').href=base+'#panel';
+  try{localStorage.setItem('mi-colmado-last',JSON.stringify({zona:c.zona,slug:c.slug}))}catch(e){}
+  last={zona:c.zona,slug:c.slug};
 }
-function card(p){
-  const o=p.o&&p.o<p.p;
-  return `<article class="prod">${!p.ok?'<span class="tag gray">Agotado</span>':o?'<span class="tag">Oferta</span>':''}
-  <h3>${esc(p.n)}</h3><span class="unit">${esc(p.u)}</span>
-  <div><span class="price">${rd(price(p))}</span>${o?`<span class="old">${rd(p.p)}</span>`:''}</div>
-  <button class="btn small" data-add="${p.id}" ${p.ok&&S.open?'':'disabled'}>${p.ok?(S.open?'Añadir':'Cerrado'):'No hay'}</button></article>`;
-}
-function renderCart(){
-  const ids=Object.keys(cart).filter(id=>cart[id]>0&&S.products.find(p=>p.id===id));
-  let n=0,t=0;ids.forEach(id=>{const p=S.products.find(p=>p.id===id);n+=cart[id];t+=cart[id]*price(p)});
-  const fee=S.delivery?(+S.fee||0):0;
-  $('#cartbar').classList.toggle('show',n>0);
-  $('#cartcount').textContent=n+(n===1?' producto':' productos');$('#carttotal').textContent=rd(t);
-  $('#carttotal2').textContent=rd(t+fee)+(fee?' (incluye delivery '+rd(fee)+')':'');
-  $('#cartlines').innerHTML=ids.map(id=>{const p=S.products.find(p=>p.id===id);return `<div class="line"><span class="n"><b>${esc(p.n)}</b><br><span class="unit">${rd(price(p))} / ${esc(p.u)}</span></span>
-  <span class="qty"><button data-q="${id}" data-d="-1" aria-label="Menos">−</button><b>${cart[id]}</b><button data-q="${id}" data-d="1" aria-label="Más">+</button></span><span class="num">${rd(cart[id]*price(p))}</span></div>`}).join('');
-  const msg=['¡Saludos, '+S.name+'! Quiero este pedido:','',...ids.map(id=>{const p=S.products.find(p=>p.id===id);return `• ${cart[id]} × ${p.n} (${p.u}) = ${rd(cart[id]*price(p))}`}),'','Total: '+rd(t+fee),
-    'Nombre: '+($('#cname').value||'—'),'Dirección: '+($('#caddr').value||'—')].concat($('#cnote').value?['Nota: '+$('#cnote').value]:[]);
-  $('#sendorder').href=waLink(msg.join('\n'));
-}
-document.addEventListener('click',e=>{
-  const a=e.target.closest('[data-add]');if(a){cart[a.dataset.add]=(cart[a.dataset.add]||0)+1;renderCart();a.textContent='¡Añadido!';setTimeout(()=>{a.textContent='Añadir'},900)}
-  const q=e.target.closest('[data-q]');if(q){cart[q.dataset.q]=Math.max(0,(cart[q.dataset.q]||0)+ +q.dataset.d);renderCart();if(!Object.values(cart).some(v=>v>0))$('#sheet').classList.remove('show')}
-  const c=e.target.closest('[data-c]');if(c){cat=c.dataset.c;renderShop()}
-});
-$('#q').addEventListener('input',renderShop);
-['#cname','#caddr','#cnote'].forEach(s=>$(s).addEventListener('input',renderCart));
-$('#opencart').onclick=()=>$('#sheet').classList.add('show');
-$('#closecart').onclick=()=>$('#sheet').classList.remove('show');
-$('#sheet').addEventListener('click',e=>{if(e.target.id==='sheet')e.target.classList.remove('show')});
-
-/* ---------- utilidades de lenguaje ---------- */
-function norm(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/rd\$/g,' ').replace(/\$/g,' ').replace(/(\d)[.,](\d{3})\b/g,'$1$2').replace(/[^a-z0-9ñ. ]/g,' ').replace(/\s+/g,' ').trim()}
-const NW={cero:0,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9,diez:10,once:11,doce:12,trece:13,catorce:14,quince:15,dieciseis:16,diecisiete:17,dieciocho:18,diecinueve:19,veinte:20,veintiuno:21,veintidos:22,veintitres:23,veinticuatro:24,veinticinco:25,veintiseis:26,veintisiete:27,veintiocho:28,veintinueve:29,treinta:30,cuarenta:40,cincuenta:50,sesenta:60,setenta:70,ochenta:80,noventa:90,cien:100,ciento:100,doscientos:200,trescientos:300,cuatrocientos:400,quinientos:500,seiscientos:600,setecientos:700,ochocientos:800,novecientos:900,mil:1000};
-function words2num(t){
-  const w=t.split(' '),out=[];let i=0;
-  while(i<w.length){
-    if(w[i] in NW||(w[i]==='un'&&w[i+1]==='mil')){
-      let total=0,cur=0;
-      while(i<w.length&&(w[i] in NW||w[i]==='un'||(w[i]==='y'&&w[i+1] in NW))){
-        const x=w[i];if(x==='y'||x==='un'){if(x==='un')cur+=1;i++;continue}
-        if(x==='mil'){total+=(cur||1)*1000;cur=0}else cur+=NW[x];i++}
-      out.push(String(total+cur));
-    }else out.push(w[i++]);
-  }
-  return out.join(' ');
-}
-const sing=w=>w.length>3&&w.endsWith('s')?w.slice(0,-1):w;
-const STOP=new Set(['el','la','los','las','lo','un','una','de','del','al','a','e','y','que','me','mi']);
-const toks=s=>norm(s).split(' ').filter(x=>x&&!STOP.has(x)).map(sing);
-function lev(a,b){const m=[...Array(b.length+1).keys()];for(let i=1;i<=a.length;i++){let p=m[0];m[0]=i;for(let j=1;j<=b.length;j++){const t=m[j];m[j]=Math.min(m[j]+1,m[j-1]+1,p+(a[i-1]===b[j-1]?0:1));p=t}}return m[b.length]}
-const near=(a,b)=>a===b||(a.length>=4&&b.length>=4&&(a.startsWith(b)||b.startsWith(a)||lev(a,b)<=(Math.max(a.length,b.length)>=7?2:1)));
-function findProduct(name){
-  const q=toks(name);if(!q.length)return null;let best=null,bs=0;
-  for(const p of S.products){const pt=toks(p.n+' '+p.u);const pn=toks(p.n);
-    let hit=0;q.forEach(w=>{if(pt.some(x=>near(w,x)))hit++});
-    let s=hit/q.length;if(pn.every(x=>q.some(w=>near(w,x))))s+=.3;if(near(q[0],pn[0]))s+=.2;
-    if(s>bs){bs=s;best=p}}
-  return bs>=.6?best:null;
-}
-const clean=s=>s.replace(/^(?:por favor |oye |mira |dime |ahora |ya |bueno |ok )+/,'').replace(/\b(?:por favor|pesos?|varos?|cuartos?|rd)\b/g,' ').replace(/\s+/g,' ').trim();
-const stripVerb=s=>s.replace(/^(?:ponle|ponme|pon|cambia(?:le)?|sube(?:le)?|baja(?:le)?|el precio (?:de|del)|precio (?:de|del)|dejame|deja|vende|vendo|tengo)\s+/,'').replace(/^(?:el|la|los|las|lo|al|a la|a los|del)\s+/,'').trim();
-const cap=s=>s.replace(/\b\w/g,c=>c.toUpperCase());
-
-function parse(raw){
-  let t=clean(words2num(norm(raw)));if(!t)return null;let m;
-  if(m=t.match(/cuanto (?:me )?debe (.+)$/))return{type:'askDebt',who:m[1]};
-  if(/cuanto (?:vendi|vendimos|se vendio|llevamos|hemos vendido|he vendido)/.test(t))return{type:'askSales'};
-  if(m=t.match(/^(?:fiale|fiao|fia|fiar)(?: a)? (.+?) (\d+(?:\.\d+)?)$/))return{type:'debt',who:m[1],amt:+m[2]};
-  if(m=t.match(/^(?:a )?(.+?) (?:me debe|debe|cogio fiao|cogio fiado|se llevo fiao|se llevo fiado|fio|le fie)(?: de)? (\d+(?:\.\d+)?)/))return{type:'debt',who:m[1],amt:+m[2]};
-  if(m=t.match(/^(?:a )?(.+?) (?:me pago|pago|me abono|abono|dio|me dio|trajo)(?: de)? (\d+(?:\.\d+)?)/))return{type:'pay',who:m[1],amt:+m[2]};
-  if(m=t.match(/^(.+?) (?:saldo|salda|pago todo|me pago todo|ya pago todo)$/))return{type:'payall',who:m[1]};
-  if(m=t.match(/^(?:anota |apunta |pon )?(?:una )?(?:venta|vendi|vendimos|se vendio|se vendieron)(?: de| por)? (\d+(?:\.\d+)?)/))return{type:'sale',amt:+m[1]};
-  if(/^(?:abre|abrimos|abierto|estamos abiertos|ya abrimos|ya estamos abiertos)\b/.test(t))return{type:'open',v:true};
-  if(/^(?:cierra|cerramos|cerrado|estamos cerrados|ya cerramos)\b/.test(t))return{type:'open',v:false};
-  if(/(?:no hay|sin|quita el|quitale el|apaga el|para el|no tenemos) delivery/.test(t))return{type:'del',v:false};
-  if(/(?:hay|con|pon el|activa el|ya hay|volvio el) delivery/.test(t))return{type:'del',v:true};
-  if(m=t.match(/^quita(?:le)? (?:la )?oferta (?:del|de la|de los|de las|de|al|a la)? ?(.+)$/))return{type:'unoffer',name:m[1]};
-  if(m=t.match(/^(?:pon(?:le)? )?(?:en )?oferta (?:de |del |el |la |al |a la |los |las )?(.+?) (?:a|en|por) (\d+(?:\.\d+)?)/))return{type:'offer',name:m[1],amt:+m[2]};
-  if(m=t.match(/^(?:se (?:nos )?(?:acabo|acabaron|termino|terminaron)|no hay|no queda|no quedan|ya no hay|no tenemos|ta agotao|esta agotado|agotado|agota)(?: el| la| los| las| lo)? (.+)$/))return{type:'out',name:m[1]};
-  if(m=t.match(/^(.+?) (?:agotado|agotada|agotao|se acabo|se termino|no hay)$/))return{type:'out',name:m[1]};
-  if(m=t.match(/^(?:llego|llegaron|ya hay|ya llego|ya llegaron|volvio|volvieron|hay|tenemos|ya tenemos)(?: el| la| los| las| lo)? (.+)$/))return{type:'in',name:m[1]};
-  if(m=t.match(/^(?:agrega(?:le)?|agregame|anade|mete(?:le)?|nuevo producto|nuevo|nueva|pon nuevo)(?: el| la| los| las| un| una)? (.+?) (?:a|en|de|por|que vale|que cuesta) (\d+(?:\.\d+)?)/))return{type:'add',name:m[1],amt:+m[2]};
-  if(m=t.match(/^(?:borra(?:le)?|elimina|saca|quita)(?: el| la| los| las| lo)? (.+)$/))return{type:'remove',name:m[1]};
-  if(m=t.match(/^(.*?)\s(?:a|en|vale|cuesta|esta a|ta a|sale a|por|lo pongo a|se vende a)\s(\d+(?:\.\d+)?)/)){const n=stripVerb(m[1]);if(n)return{type:'price',name:n,amt:+m[2]}}
-  if(m=t.match(/^(.+?) (\d+(?:\.\d+)?)$/)){const n=stripVerb(m[1]);if(n&&findProduct(n))return{type:'price',name:n,amt:+m[2]}}
-  return null;
-}
-const fGet=who=>S.fiao.find(f=>near(toks(f.name).join(' '),toks(who).join(' '))||toks(f.name).some(x=>toks(who).some(w=>w.length>3&&near(w,x))));
-const bal=f=>f.items.reduce((s,i)=>s+(i.k==='d'?i.amt:-i.amt),0);
-
-/* resolver una orden en {text, run} o en un aviso */
-function plan(c){
-  const NF=n=>({warn:`No encontré «${n}» en tu lista. Dímelo más despacito o búscalo en Productos.`});
-  if(c.type==='askDebt'){const f=fGet(c.who);return{info:f?`${f.name} te debe ${rd(bal(f))}.`:`No tengo a «${cap(c.who)}» en la libreta del fiao.`}}
-  if(c.type==='askSales'){const t=S.sales.filter(s=>s.t.startsWith(today())).reduce((a,s)=>a+s.amt,0);return{info:`Hoy llevas ${rd(t)} anotados en ventas.`}}
-  if(c.type==='debt'||c.type==='pay'||c.type==='payall'){
-    const f=fGet(c.who),who=f?f.name:cap(c.who),b=f?bal(f):0;
-    if(c.type==='payall'){if(!f||b<=0)return{warn:`${who} no debe nada en la libreta.`};c.amt=b}
-    if(c.type!=='debt'&&!f)return{warn:`No tengo a «${who}» en la libreta. ¿Me lo dices otra vez, despacito?`};
-    const nb=c.type==='debt'?b+c.amt:b-c.amt;
-    return{text:c.type==='debt'?`Anotar que ${who} te debe ${rd(c.amt)} más. Le quedaría ${rd(nb)} en total.`:`Anotar que ${who} pagó ${rd(c.amt)}. Le quedaría ${rd(Math.max(0,nb))}.`,
-      run:()=>{let g=f;if(!g){g={name:who,items:[]};S.fiao.push(g)}g.items.push({k:c.type==='debt'?'d':'p',amt:c.amt,t:today()})}}
-  }
-  if(c.type==='sale')return{text:`Anotar una venta de ${rd(c.amt)}.`,run:()=>S.sales.push({amt:c.amt,t:new Date().toISOString().slice(0,19).replace('T',' ').replace(/^\S+/,today())})};
-  if(c.type==='open')return{text:c.v?'Poner el colmado como ABIERTO en tu página.':'Poner el colmado como CERRADO en tu página.',run:()=>{S.open=c.v}};
-  if(c.type==='del')return{text:c.v?'Activar el delivery en tu página.':'Quitar el delivery de tu página por ahora.',run:()=>{S.delivery=c.v}};
-  const p=c.name?findProduct(c.name):null;
-  if(c.type==='price'||c.type==='add'){
-    if(!(c.amt>0))return{warn:'No escuché bien el precio. Repítemelo despacito, por ejemplo: «el arroz a 40».'};
-    if(p&&c.type==='price'){if(p.p===c.amt)return{info:`${p.n} ya está a ${rd(c.amt)}.`};return{text:`${p.n} (${p.u}): de ${rd(p.p)} a ${rd(c.amt)}.`,run:()=>{p.p=c.amt;if(p.o&&p.o>=p.p)p.o=null}}}
-    const n=cap(c.name);return{text:`Agregar producto nuevo: ${n} a ${rd(c.amt)}.`,run:()=>S.products.push({id:'p'+Date.now(),n,u:'unidad',c:'Víveres',p:c.amt,ok:true,o:null})};
-  }
-  if(!p)return NF(c.name);
-  if(c.type==='out')return p.ok?{text:`Marcar ${p.n} como AGOTADO.`,run:()=>{p.ok=false}}:{info:`${p.n} ya está marcado como agotado.`};
-  if(c.type==='in')return p.ok?{info:`${p.n} ya aparece disponible.`}:{text:`Poner ${p.n} disponible otra vez.`,run:()=>{p.ok=true}};
-  if(c.type==='offer')return c.amt<p.p?{text:`Oferta: ${p.n} a ${rd(c.amt)} (antes ${rd(p.p)}).`,run:()=>{p.o=c.amt}}:{warn:`La oferta tiene que ser menos de ${rd(p.p)}. ¿Me dices el precio otra vez?`};
-  if(c.type==='unoffer')return p.o?{text:`Quitar la oferta de ${p.n}.`,run:()=>{p.o=null}}:{info:`${p.n} no tiene oferta.`};
-  if(c.type==='remove')return{text:`Borrar ${p.n} de tu lista de productos.`,run:()=>{S.products=S.products.filter(x=>x!==p)}};
-  return{warn:SLOW};
-}
-const SLOW='Despacito, por favor. No te entendí bien. Repítemelo más lento, por ejemplo: «el arroz a 40».';
-
-/* ---------- respuestas ---------- */
-let pending=null,undoSnap=null;
-function speak(t){if(!S.voice)return;try{const u=new SpeechSynthesisUtterance(t.replace(/RD\$/g,'').replace(/«|»/g,''));u.lang='es-US';speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
-function reply(kind,text,heard,actions){
-  $('#reply').innerHTML=`<div class="bubble ${kind}">${heard?`<p class="unit">Escuché: «${esc(heard)}»</p>`:''}<p>${esc(text)}</p>${actions||''}</div>`;speak(text);
-}
-function handle(text,conf){
-  text=String(text||'').trim();if(!text)return;
-  const c=parse(text);
-  if(!c){reply('warn',SLOW,text);return}
-  const r=plan(c);
-  if(r.warn){reply('warn',r.warn,text);return}
-  if(r.info){reply('ok',r.info,text);return}
-  pending=r;
-  const unsure=conf&&conf<.6;
-  reply(unsure?'warn':'',(unsure?'Creo que te entendí, pero habla un poquito más despacio la próxima vez. ':'')+'¿Hago esto? '+r.text,text,
-    '<div class="btns"><button class="btn" id="yes">Sí, hazlo</button><button class="btn ghost" id="no">No</button></div>');
-}
-document.addEventListener('click',e=>{
-  if(e.target.id==='yes'&&pending){undoSnap=JSON.stringify(S);pending.run();const txt=pending.text;pending=null;save();renderAll();$('#reply').innerHTML=`<div class="bubble ok"><p>Listo. ${esc(txt)}</p></div>`;speak('Listo');toast('Cambio hecho')}
-  if(e.target.id==='no'){pending=null;reply('','Ok, no cambié nada. Dímelo otra vez cuando quieras.')}
-});
-let tt;function toast(t){$('#toasttxt').textContent=t;$('#toast').classList.add('show');clearTimeout(tt);tt=setTimeout(()=>$('#toast').classList.remove('show'),6000)}
-$('#undo').onclick=()=>{if(undoSnap){S=JSON.parse(undoSnap);undoSnap=null;save();renderAll();$('#toast').classList.remove('show');reply('','Deshice el último cambio.')}};
-
-const EX=['El arroz a 40','Se acabó el pan','Ya llegó el hielo','Oferta de salami a 145','Agrega queso amarillo a 280','Doña Carmen me debe 500','Juancito pagó 200','¿Cuánto me debe Doña Carmen?','Anota venta de 1,250','Hoy no hay delivery','Cerramos'];
-$('#examples').innerHTML=EX.map(x=>`<li><button data-ex="${esc(x)}">«${esc(x)}»</button></li>`).join('');
-document.addEventListener('click',e=>{const b=e.target.closest('[data-ex]');if(b){$('#sayinput').value=b.dataset.ex;handle(b.dataset.ex,1)}});
-$('#sayform').onsubmit=e=>{e.preventDefault();handle($('#sayinput').value,1);$('#sayinput').value=''};
-
-/* ---------- micrófono ---------- */
-const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-let dict=null,rec=null,listening=false,heard='',useNative=!!SR;
-function setL(v){listening=v;$('#mic').classList.toggle('on',v);$('#miclabel').textContent=v?'Te escucho… toca otra vez al terminar':'Toca y dime qué cambiar'}
-function hint(){$('#michint').textContent=dict||SR?'Habla normal, sin apuro. Si no te entiendo, te pido que lo repitas más despacio.':'Este teléfono no deja usar el micrófono aquí: toca la cajita y usa el micrófono de tu teclado.'}
-function typeFallback(msg){setL(false);useNative=false;$('#sayinput').focus();$('#michint').textContent=msg||'No pude usar el micrófono. Toca la cajita y usa el micrófono de tu teclado.'}
-try{if(window.claude&&claude.use)claude.use('dictation').then(d=>{if(!d)return;dict=d;
-  d.onPartial(({text})=>{$('#live').textContent=(heard+' '+text).trim()});
-  d.onFinal(({text})=>{heard=(heard+' '+text).trim();$('#live').textContent=heard});
-  d.onState(({state})=>{if(state==='listening')setL(true);else if(state==='idle'){setL(false);const h=heard;heard='';if(h)handle(h,1)}});hint()}).catch(()=>{})}catch(e){}
-hint();
-$('#mic').onclick=()=>{
-  if(listening){if(dict&&!rec){dict.stop().catch(()=>{})}else if(rec){rec.stop()}return}
-  heard='';$('#live').textContent='…';
-  if(dict){dict.start().catch(e=>{const m=String(e&&e.message||e);typeFallback(m.includes('not_granted')?'No diste permiso al micrófono. Puedes escribir aquí abajo.':undefined)});setL(true);return}
-  if(useNative){
-    rec=new SR();rec.lang='es-DO';rec.interimResults=true;rec.maxAlternatives=1;let fin='',conf=1;
-    rec.onresult=e=>{let inter='';fin='';conf=1;for(const r of e.results){if(r.isFinal){fin+=r[0].transcript+' ';conf=Math.min(conf,r[0].confidence||1)}else inter+=r[0].transcript}$('#live').textContent=(fin+inter).trim()};
-    rec.onerror=e=>{if(/not-allowed|service-not-allowed|audio-capture/.test(e.error))typeFallback();else if(e.error==='no-speech')reply('warn','No te escuché. Acércate un poquito al teléfono y habla despacito.')};
-    rec.onend=()=>{setL(false);rec=null;if(fin.trim())handle(fin,conf)};
-    try{rec.start();setL(true)}catch(e){typeFallback()}return;
-  }
-  typeFallback();
-};
-
-/* ---------- panel: vistas ---------- */
-$$('.tabs button').forEach(b=>b.onclick=()=>{$$('.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));$$('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+b.dataset.v))});
-$('#ac').innerHTML=CATS.map(c=>`<option>${esc(c)}</option>`).join('');
-function renderProducts(){
-  const q=norm($('#pq').value);
-  $('#plist').innerHTML=S.products.filter(p=>!q||norm(p.n).includes(q)).map(p=>`<div class="prow" data-id="${p.id}">
-   <span class="pn"><b>${esc(p.n)}</b> <span class="unit">· ${esc(p.u)} · ${esc(p.c)}</span></span>
-   <label class="sw" style="margin:0">RD$ <input type="number" min="0" value="${p.p}" data-f="p" aria-label="Precio de ${esc(p.n)}"></label>
-   <label class="sw" style="margin:0">Oferta <input type="number" min="0" value="${p.o||''}" data-f="o" aria-label="Oferta de ${esc(p.n)}"></label>
-   <label class="sw" style="margin:0"><input type="checkbox" data-f="ok" ${p.ok?'checked':''}> Hay</label></div>`).join('')||'<p>No hay productos con ese nombre.</p>';
-}
-$('#pq').addEventListener('input',renderProducts);
-$('#plist').addEventListener('change',e=>{const row=e.target.closest('[data-id]');const p=S.products.find(x=>x.id===row.dataset.id);const f=e.target.dataset.f;
-  undoSnap=JSON.stringify(S);
-  if(f==='ok')p.ok=e.target.checked;else if(f==='p')p.p=Math.max(0,+e.target.value||0);else{const v=+e.target.value;p.o=v>0&&v<p.p?v:null}
-  save();renderShop();toast('Guardado: '+p.n)});
-$('#addform').onsubmit=e=>{e.preventDefault();undoSnap=JSON.stringify(S);S.products.push({id:'p'+Date.now(),n:$('#an').value.trim(),u:$('#au').value.trim()||'unidad',c:$('#ac').value,p:+$('#ap').value,ok:true,o:null});save();e.target.reset();renderAll();toast('Producto agregado')};
-
-function renderFiao(){
-  const list=S.fiao.map(f=>({f,b:bal(f)})).filter(x=>x.b>0).sort((a,b)=>b.b-a.b);
-  $('#ftotal').textContent=rd(list.reduce((s,x)=>s+x.b,0));
-  $('#flist').innerHTML=list.map(({f,b})=>`<div class="line"><span class="n"><b>${esc(f.name)}</b><br><span class="unit">Última anotación: ${esc(f.items[f.items.length-1].t)}</span></span><span class="num"><b>${rd(b)}</b></span></div>`).join('')||'<p>Nadie te debe. ¡Qué bueno!</p>';
-  $('#fnames').innerHTML=S.fiao.map(f=>`<option value="${esc(f.name)}">`).join('');
-}
-let fk='d';$$('#fform button').forEach(b=>b.onclick=()=>{fk=b.dataset.k});
-$('#fform').onsubmit=e=>{e.preventDefault();const who=$('#fwho').value.trim(),amt=+$('#famt').value;if(!who||!(amt>0))return;undoSnap=JSON.stringify(S);
-  let f=S.fiao.find(x=>norm(x.name)===norm(who));if(!f){f={name:cap(who),items:[]};S.fiao.push(f)}f.items.push({k:fk,amt,t:today()});save();e.target.reset();renderAll();toast(fk==='d'?'Anotado en el fiao':'Pago anotado')};
-
-function renderSales(){
-  const td=S.sales.filter(s=>s.t.startsWith(today()));
-  $('#vtoday').textContent=rd(td.reduce((a,s)=>a+s.amt,0));
-  $('#vlist').innerHTML=td.slice().reverse().map(s=>`<div class="line"><span class="n">${esc(s.t.slice(11,16))}</span><span class="num">${rd(s.amt)}</span></div>`).join('')||'<p>Todavía no has anotado ventas hoy.</p>';
-  const days=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-6+i);const k=d.toLocaleDateString('en-CA');return{k,l:d.toLocaleDateString('es-DO',{weekday:'short'}),v:S.sales.filter(s=>s.t.startsWith(k)).reduce((a,s)=>a+s.amt,0)}});
-  const mx=Math.max(1,...days.map(d=>d.v));
-  $('#vweek').innerHTML=days.map(d=>`<div class="line"><span>${esc(d.l)}</span><span class="bar"><i style="width:${d.v/mx*100}%"></i></span><span class="num">${rd(d.v)}</span></div>`).join('');
-}
-$('#vform').onsubmit=e=>{e.preventDefault();const a=+$('#vamt').value;if(a>0){undoSnap=JSON.stringify(S);plan({type:'sale',amt:a}).run();save();$('#vamt').value='';renderAll();toast('Venta anotada')}};
-
-const SET=['name','barrio','address','hours','wa','fee','rnc','pin'];
-function renderSettings(){SET.forEach(k=>$('#s-'+k).value=S[k]??'');$('#s-open').checked=S.open;$('#s-delivery').checked=S.delivery;$('#s-voice').checked=S.voice;$('#pname').textContent=S.name}
-$('#saveset').onclick=()=>{undoSnap=JSON.stringify(S);SET.forEach(k=>S[k]=k==='fee'?+$('#s-fee').value||0:$('#s-'+k).value.trim());if(!S.pin)S.pin='1234';S.open=$('#s-open').checked;S.delivery=$('#s-delivery').checked;S.voice=$('#s-voice').checked;save();renderAll();toast('Ajustes guardados')};
-$('#resetdemo').onclick=()=>{undoSnap=JSON.stringify(S);S=JSON.parse(JSON.stringify(SAMPLE));S.products.forEach((p,i)=>p.id='p'+i);save();renderAll();toast('Demo restablecida')};
-
-/* ---------- PIN y rutas ---------- */
-let unlocked=false;try{unlocked=sessionStorage.getItem(KEY+'-ok')==='1'}catch(e){}
-function gate(){$('#gate').hidden=unlocked;$('#pbody').hidden=!unlocked}
-$('#pinok').onclick=()=>{if($('#pin').value===String(S.pin||'1234')){unlocked=true;try{sessionStorage.setItem(KEY+'-ok','1')}catch(e){}gate()}else{$('#pinmsg').textContent='PIN incorrecto. En esta demo es 1234.'}};
-$('#pin').addEventListener('keydown',e=>{if(e.key==='Enter')$('#pinok').click()});
-function route(){document.body.classList.toggle('admin',location.hash==='#panel');window.scrollTo(0,0);gate()}
-window.addEventListener('hashchange',route);
-
-function renderInvoices(){
-  const td=S.sales.filter(s=>s.t.startsWith(today()));
-  $('#frnc').textContent=S.rnc?'RNC/Cédula: '+S.rnc:'Pon tu RNC en Ajustes para tenerlo a mano.';
-  $('#fsum').textContent=td.length?[S.name+' · ventas del '+today(),...td.map(s=>s.t.slice(11,16)+'  '+rd(s.amt)),'Total: '+rd(td.reduce((a,s)=>a+s.amt,0))].join('\n'):'Todavía no has anotado ventas hoy. Dímelas en «Hablar»: «anota venta de 500».';
-}
-$('#fcopy').onclick=()=>{const t=$('#fsum').textContent;try{navigator.clipboard.writeText(t).then(()=>toast('Resumen copiado'),()=>toast('Mantén el dedo sobre el texto para copiarlo'))}catch(e){toast('Mantén el dedo sobre el texto para copiarlo')}};
-function renderAll(){renderShop();renderProducts();renderFiao();renderSales();renderSettings();renderInvoices()}
-renderAll();route();
+$('#zone').addEventListener('change',fillColm);$('#colm').addEventListener('change',pick);
+fetch('/colmados.json').then(r=>r.json()).then(d=>{list=Array.isArray(d)?d:[];
+  const zs=zones();$('#zone').innerHTML=zs.map(z=>`<option>${esc(z)}</option>`).join('')||'<option>Sin colmados todavía</option>';
+  if(zs.includes(last.zona))$('#zone').value=last.zona;fillColm();
+}).catch(()=>{$('#zone').innerHTML='<option>Sin conexión</option>';pick()});
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 }
 </script>
-<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{})</script>
 </body>
 </html>
