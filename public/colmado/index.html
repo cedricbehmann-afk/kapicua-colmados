@@ -54,6 +54,12 @@ button{cursor:pointer}
 .cat[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,150px),1fr));gap:12px}
 .prod{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.ph{aspect-ratio:4/3;border-radius:12px;background:var(--line) center/cover no-repeat;margin-bottom:4px;display:grid;place-items:center;font:400 42px "Lilita One",sans-serif;color:var(--soft)}
+.offers .ph{background-color:#f3e7cc}
+.thumb{flex:none;width:64px;height:64px;border-radius:12px;border:2px dashed var(--line);background:var(--bg) center/cover no-repeat;display:grid;place-items:center;font-size:12px;font-weight:800;color:var(--soft);cursor:pointer;text-align:center;line-height:1.1}
+.thumb.has{border-style:solid}
+.thumb input{position:absolute;width:1px;height:1px;opacity:0}
+.pn{display:flex;gap:10px;align-items:center}
 .prod h3{font-family:Nunito,sans-serif;font-weight:800;font-size:17px;margin:0}
 .unit{color:var(--soft);font-size:14px}
 .price{font-family:"Lilita One",sans-serif;font-size:26px;white-space:nowrap}
@@ -110,7 +116,7 @@ body.admin .shop{display:none}body.admin .panel{display:block}
 .rows{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:4px 14px}
 .prow{display:grid;grid-template-columns:minmax(0,1fr) 110px 110px auto;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
 .prow:last-child,.line:last-child{border-bottom:0}
-.prow input{min-height:44px;width:100%;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink);padding:0 8px;text-align:right}
+.prow .sw{display:flex}.prow input[type=number]{flex:1;min-width:64px;min-height:44px;width:100%;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink);padding:0 8px;text-align:right}
 .sw{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:14px;min-height:44px}
 .sw input{width:22px;height:22px}
 @media(max-width:600px){.prow{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.prow .pn{grid-column:1/-1}}
@@ -291,6 +297,7 @@ body.admin .shop{display:none}body.admin .panel{display:block}
         <div><label for="au">Unidad</label><input id="au" class="field" placeholder="libra, unidad, paquete"></div>
         <div><label for="ap">Precio (RD$)</label><input id="ap" class="field" type="number" min="0" step="1" required></div>
         <div><label for="ac">Categoría</label><select id="ac" class="field"></select></div>
+        <div><label for="aimg">Foto (opcional)</label><input id="aimg" class="field" type="file" accept="image/*"></div>
         <div><button class="btn" style="width:100%;margin-top:30px">Agregar</button></div>
       </form>
     </div></section>
@@ -393,7 +400,8 @@ let S;
 try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 if(!S||!S.products)S=JSON.parse(JSON.stringify(SAMPLE));
 S.products.forEach((p,i)=>p.id=p.id||'p'+i+'_'+Math.random().toString(36).slice(2,6));
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));return true}catch(e){return false}};
+function toPhoto(file){return new Promise((res,rej)=>{const fr=new FileReader();fr.onerror=rej;fr.onload=()=>{const im=new Image();im.onerror=rej;im.onload=()=>{const sc=Math.min(1,480/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',0.72))};im.src=fr.result};fr.readAsDataURL(file)})}
 const waNum=()=>(S.wa||'').replace(/\D/g,'').replace(/^(8[024]9\d{7})$/,'1$1');
 const waLink=t=>'https://wa.me/'+waNum()+'?text='+encodeURIComponent(t);
 const price=p=>p.o&&p.o<p.p?p.o:p.p;
@@ -431,7 +439,8 @@ function renderShop(){
 }
 function card(p){
   const o=p.o&&p.o<p.p;
-  return `<article class="prod">${!p.ok?'<span class="tag gray">Agotado</span>':o?'<span class="tag">Oferta</span>':''}
+  const ph=p.img?`<div class="ph" style="background-image:url(${p.img})" role="img" aria-label="Foto de ${esc(p.n)}"></div>`:`<div class="ph" aria-hidden="true">${esc(p.n.charAt(0))}</div>`;
+  return `<article class="prod">${ph}${!p.ok?'<span class="tag gray">Agotado</span>':o?'<span class="tag">Oferta</span>':''}
   <h3>${esc(p.n)}</h3><span class="unit">${esc(p.u)}</span>
   <div><span class="price">${rd(price(p))}</span>${o?`<span class="old">${rd(p.p)}</span>`:''}</div>
   <button class="btn small" data-add="${p.id}" ${p.ok&&S.open?'':'disabled'}>${p.ok?(S.open?'Añadir':'Cerrado'):'No hay'}</button></article>`;
@@ -540,7 +549,7 @@ function plan(c){
   if(c.type==='price'||c.type==='add'){
     if(!(c.amt>0))return{warn:'No escuché bien el precio. Repítemelo despacito, por ejemplo: «el arroz a 40».'};
     if(p&&c.type==='price'){if(p.p===c.amt)return{info:`${p.n} ya está a ${rd(c.amt)}.`};return{text:`${p.n} (${p.u}): de ${rd(p.p)} a ${rd(c.amt)}.`,run:()=>{p.p=c.amt;if(p.o&&p.o>=p.p)p.o=null}}}
-    const n=cap(c.name);return{text:`Agregar producto nuevo: ${n} a ${rd(c.amt)}.`,run:()=>S.products.push({id:'p'+Date.now(),n,u:'unidad',c:'Víveres',p:c.amt,ok:true,o:null})};
+    const n=cap(c.name),id='p'+Date.now();return{text:`Agregar producto nuevo: ${n} a ${rd(c.amt)}.`,photo:id,run:()=>S.products.push({id,n,u:'unidad',c:'Víveres',p:c.amt,ok:true,o:null})};
   }
   if(!p)return NF(c.name);
   if(c.type==='out')return p.ok?{text:`Marcar ${p.n} como AGOTADO.`,run:()=>{p.ok=false}}:{info:`${p.n} ya está marcado como agotado.`};
@@ -571,10 +580,11 @@ function handle(text,conf){
     '<div class="btns"><button class="btn" id="yes">Sí, hazlo</button><button class="btn ghost" id="no">No</button></div>');
 }
 document.addEventListener('click',e=>{
-  if(e.target.id==='yes'&&pending){undoSnap=JSON.stringify(S);pending.run();const txt=pending.text;pending=null;save();renderAll();$('#reply').innerHTML=`<div class="bubble ok"><p>Listo. ${esc(txt)}</p></div>`;speak('Listo');toast('Cambio hecho')}
+  if(e.target.id==='yes'&&pending){undoSnap=JSON.stringify(S);pending.run();const txt=pending.text,ph=pending.photo;pending=null;save();renderAll();$('#reply').innerHTML=`<div class="bubble ok"><p>Listo. ${esc(txt)}</p>${ph?`<label class="btn small" style="position:relative">Tomarle una foto<input type="file" accept="image/*" data-newphoto="${ph}" style="position:absolute;width:1px;height:1px;opacity:0"></label><p class="unit" style="margin-top:8px">Con foto, tus clientes saben exactamente qué es.</p>`:''}</div>`;speak('Listo');toast('Cambio hecho')}
   if(e.target.id==='no'){pending=null;reply('','Ok, no cambié nada. Dímelo otra vez cuando quieras.')}
 });
 let tt;function toast(t){$('#toasttxt').textContent=t;$('#toast').classList.add('show');clearTimeout(tt);tt=setTimeout(()=>$('#toast').classList.remove('show'),6000)}
+document.addEventListener('change',async e=>{const id=e.target.dataset&&e.target.dataset.newphoto;if(!id)return;const p=S.products.find(x=>x.id===id);const f=e.target.files&&e.target.files[0];if(!p||!f)return;try{p.img=await toPhoto(f);if(!save()){p.img=null;toast('No hay espacio para más fotos');return}renderAll();$('#reply').innerHTML=`<div class="bubble ok"><p>Foto puesta: ${esc(p.n)}</p></div>`}catch(_){toast('No pude abrir esa foto')}});
 $('#undo').onclick=()=>{if(undoSnap){S=JSON.parse(undoSnap);undoSnap=null;save();renderAll();$('#toast').classList.remove('show');reply('','Deshice el último cambio.')}};
 
 const EX=['El arroz a 40','Se acabó el pan','Ya llegó el hielo','Oferta de salami a 145','Agrega queso amarillo a 280','Doña Carmen me debe 500','Juancito pagó 200','¿Cuánto me debe Doña Carmen?','Anota venta de 1,250','Hoy no hay delivery','Cerramos'];
@@ -613,17 +623,18 @@ $('#ac').innerHTML=CATS.map(c=>`<option>${esc(c)}</option>`).join('');
 function renderProducts(){
   const q=norm($('#pq').value);
   $('#plist').innerHTML=S.products.filter(p=>!q||norm(p.n).includes(q)).map(p=>`<div class="prow" data-id="${p.id}">
-   <span class="pn"><b>${esc(p.n)}</b> <span class="unit">· ${esc(p.u)} · ${esc(p.c)}</span></span>
+   <span class="pn"><label class="thumb${p.img?' has':''}" ${p.img?`style="background-image:url(${p.img})"`:''} title="Foto de ${esc(p.n)}">${p.img?'':'+ Foto'}<input type="file" accept="image/*" data-f="img" aria-label="Foto de ${esc(p.n)}"></label><span><b>${esc(p.n)}</b> <span class="unit">· ${esc(p.u)} · ${esc(p.c)}</span></span></span>
    <label class="sw" style="margin:0">RD$ <input type="number" min="0" value="${p.p}" data-f="p" aria-label="Precio de ${esc(p.n)}"></label>
    <label class="sw" style="margin:0">Oferta <input type="number" min="0" value="${p.o||''}" data-f="o" aria-label="Oferta de ${esc(p.n)}"></label>
    <label class="sw" style="margin:0"><input type="checkbox" data-f="ok" ${p.ok?'checked':''}> Hay</label></div>`).join('')||'<p>No hay productos con ese nombre.</p>';
 }
 $('#pq').addEventListener('input',renderProducts);
-$('#plist').addEventListener('change',e=>{const row=e.target.closest('[data-id]');const p=S.products.find(x=>x.id===row.dataset.id);const f=e.target.dataset.f;
+$('#plist').addEventListener('change',async e=>{const row=e.target.closest('[data-id]');const p=S.products.find(x=>x.id===row.dataset.id);const f=e.target.dataset.f;
+  if(f==='img'){const file=e.target.files&&e.target.files[0];if(!file)return;try{const img=await toPhoto(file);undoSnap=JSON.stringify(S);p.img=img;if(!save()){p.img=null;toast('No hay espacio para más fotos en este teléfono');return}renderAll();toast('Foto puesta: '+p.n)}catch(_){toast('No pude abrir esa foto, prueba con otra')}return}
   undoSnap=JSON.stringify(S);
   if(f==='ok')p.ok=e.target.checked;else if(f==='p')p.p=Math.max(0,+e.target.value||0);else{const v=+e.target.value;p.o=v>0&&v<p.p?v:null}
   save();renderShop();toast('Guardado: '+p.n)});
-$('#addform').onsubmit=e=>{e.preventDefault();undoSnap=JSON.stringify(S);S.products.push({id:'p'+Date.now(),n:$('#an').value.trim(),u:$('#au').value.trim()||'unidad',c:$('#ac').value,p:+$('#ap').value,ok:true,o:null});save();e.target.reset();renderAll();toast('Producto agregado')};
+$('#addform').onsubmit=async e=>{e.preventDefault();undoSnap=JSON.stringify(S);let img=null;const f=$('#aimg').files&&$('#aimg').files[0];if(f){try{img=await toPhoto(f)}catch(_){}}S.products.push({id:'p'+Date.now(),n:$('#an').value.trim(),u:$('#au').value.trim()||'unidad',c:$('#ac').value,p:+$('#ap').value,ok:true,o:null,img});if(!save())toast('No hay espacio para la foto');e.target.reset();renderAll();toast('Producto agregado')};
 
 function renderFiao(){
   const list=S.fiao.map(f=>({f,b:bal(f)})).filter(x=>x.b>0).sort((a,b)=>b.b-a.b);
