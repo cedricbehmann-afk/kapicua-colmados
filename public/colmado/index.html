@@ -335,9 +335,9 @@ body.admin .shop{display:none}body.admin .panel{display:block}
   <footer><a href="/">Elegir otro colmado</a> · <a href="#panel">Entrar al panel del dueño</a></footer>
 
   <div class="agegate" id="agegate" role="dialog" aria-modal="true" aria-labelledby="agetitle"><div>
-    <h2 id="agetitle">¿Tienes 18 años o más?</h2>
-    <p>Aquí también se vende alcohol. Los menores de 18 pueden ver los productos, pero para comprar tienen que ir al colmado.</p>
-    <div class="btns"><button class="btn" id="age-y">Sí, tengo 18 o más</button><button class="btn ghost" id="age-n">No, soy menor</button></div>
+    <h2 id="agetitle">¿Qué edad tienes?</h2>
+    <form id="ageform" class="say" style="margin-top:14px"><input id="agein" class="field" type="number" inputmode="numeric" min="5" max="110" placeholder="Tu edad" aria-label="Tu edad" required><button class="btn">Entrar</button></form>
+    <p class="unit" id="agemsg" style="margin:8px 0 0"></p>
   </div></div>
   <div class="cartbar" id="cartbar"><button class="btn red" id="opencart"><span id="cartcount">0 productos</span><span>Ver pedido · <span id="carttotal">RD$0</span></span></button></div>
 
@@ -628,7 +628,7 @@ let cat='Todo',cart={};
 let AGE=null;try{AGE=localStorage.getItem('mi-edad')}catch(e){}
 const adult=()=>AGE==='adulto';
 function setAge(v){AGE=v;try{localStorage.setItem('mi-edad',v)}catch(e){}$('#agegate').classList.remove('show');renderShop()}
-$('#age-y').onclick=()=>setAge('adulto');$('#age-n').onclick=()=>setAge('menor');
+$('#ageform').onsubmit=e=>{e.preventDefault();const n=Math.round(+$('#agein').value);if(!(n>=5&&n<=110)){$('#agemsg').textContent='Escribe tu edad en números.';return}setAge(n>=18?'adulto':'menor')};
 $('#age-reset').onclick=e=>{e.preventDefault();$('#agegate').classList.add('show')};
 function renderShop(){
   if(!AGE&&!document.body.classList.contains('admin'))$('#agegate').classList.add('show');
