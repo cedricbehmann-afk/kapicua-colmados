@@ -528,7 +528,7 @@ body.admin .shop{display:none}body.admin .panel{display:block}
         <p><b>Android (Chrome):</b> toca el menú ⋮ → <i>Agregar a la pantalla principal</i>.<br><b>iPhone (Safari):</b> toca Compartir → <i>Agregar a inicio</i>.</p>
         <p class="unit" style="margin:0">Así abres tu panel con un toque, igual que una app.</p>
       </div>
-      <p class="demo">Ayuda: si algo no funciona, escríbele a Kapicua. Plan anual RD$5,000: incluye la app descargable y todas las intervenciones. Sin plan: intervención RD$2,000 · app descargable RD$2,000.</p>
+      <p class="demo">Ayuda: si algo no funciona, escríbele a Kapicua. Plan anual RD$5,000: incluye la app descargable, todas las intervenciones y la ayuda para preparar la factura electrónica. Sin plan: intervención RD$2,000 · app descargable RD$2,000.</p>
     </div></section>
   </div>
 </div>
@@ -537,7 +537,8 @@ body.admin .shop{display:none}body.admin .panel{display:block}
 
 <script>
 {
-const SLUG=(new URLSearchParams(location.search).get('c')||'el-bacano').replace(/[^a-z0-9-]/gi,'');
+const QS=new URLSearchParams(location.search),QN=(QS.get('n')||'').trim().slice(0,40),QZ=(QS.get('z')||'').trim().slice(0,40);
+const SLUG=QN?'demo-'+QN.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''):(QS.get('c')||'el-bacano').replace(/[^a-z0-9-]/gi,'');
 const KEY='kapicua-colmado-'+SLUG;
 const CATS=['Víveres','Carnes y embutidos','Bebidas','Limpieza','Picadera'];
 const P=(n,u,c,p,o,m,x)=>Object.assign({n,u,c,p,ok:true,o:o||null,m:m||''},x||{});
@@ -549,6 +550,7 @@ P('Cloro','galón','Limpieza',150),P('Detergente','funda','Limpieza',90),P('Jab�
 P('Galletas','paquete','Picadera',25),P('Platanitos','funda','Picadera',40),P('Chicharrón','funda','Picadera',60),P('Maní','funda','Picadera',30)],
 fiao:[{name:'Doña Carmen',items:[{k:'d',amt:850,t:'2026-11-20'},{k:'p',amt:300,t:'2026-11-21'}]},{name:'Juancito',items:[{k:'d',amt:420,t:'2026-11-21'}]}],
 sales:[]};
+if(QN){SAMPLE.name=QN;if(QZ)SAMPLE.barrio=QZ+', Santo Domingo'}
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const rd=n=>'RD$'+Math.round(n).toLocaleString('en-US');
