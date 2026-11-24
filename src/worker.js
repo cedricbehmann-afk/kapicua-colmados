@@ -135,9 +135,44 @@ async function inventario(env, body) {
   };
 }
 
+
+// ---------- Tiendas reales (pilotos) ----------
+// Datos guardados en KV (binding TIENDAS). Solo el dueño, con su PIN, puede leer el fiao/ventas y guardar cambios.
+const REG = {"los-muchachos": {"name": "Colmado Los Muchachos", "barrio": "Bella Vista, Santo Domingo", "h": "4c9c7bb8c8b52fcc47ebc8371c3a4460cb1c4d2773851a5e557becfa0a5f39b4", "wa": "809-530-4923"}, "victoria": {"name": "Colmado Victoria", "barrio": "Bella Vista, Santo Domingo", "h": "1f1e3cc2803b2561ca37cb263ba0cd8abc5e5c82b17b3c4b10b23b9211d175d8", "wa": "809-535-5055"}};
+const PUBLIC_KEYS = ["name","barrio","address","hours","open","delivery","fee","wa","voice","products","iceAmts"];
+async function sha(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
+async function checkPin(slug,pin){const r=REG[slug];if(!r)return false;return (await sha(`kolmado:${slug}:${String(pin||"")}`))===r.h}
+const slugOf=(s)=>String(s||"").toLowerCase().replace(/[^a-z0-9-]/g,"").slice(0,60);
+async function tiendas(request, env, url){
+  if(!env.TIENDAS) throw new Error("Almacenamiento no disponible.");
+  if(url.pathname==="/api/tienda" && request.method==="GET"){
+    const slug=slugOf(url.searchParams.get("c"));
+    if(!REG[slug]) return json({error:"Colmado no encontrado."},404);
+    const doc=await env.TIENDAS.get("t:"+slug,"json");
+    const pub={};if(doc)PUBLIC_KEYS.forEach(k=>{if(doc[k]!==undefined)pub[k]=doc[k]});
+    return json({exists:!!doc,reg:{name:REG[slug].name,barrio:REG[slug].barrio,wa:REG[slug].wa||""},data:doc?pub:null});
+  }
+  if(url.pathname==="/api/panel" && request.method==="POST"){
+    const body=await request.json().catch(()=>({}));
+    const slug=slugOf(body.c);
+    if(!(await checkPin(slug,body.pin))) return json({error:"PIN incorrecto."},401);
+    if(body.data===undefined){const doc=await env.TIENDAS.get("t:"+slug,"json");return json({ok:true,data:doc})}
+    const raw=JSON.stringify(body.data||{});
+    if(raw.length>8_000_000) throw new Error("Demasiadas fotos: borra algunas e intenta otra vez.");
+    const data=JSON.parse(raw);delete data.pin;
+    await env.TIENDAS.put("t:"+slug,JSON.stringify(data));
+    return json({ok:true});
+  }
+  return json({error:"Ruta no encontrada."},404);
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname === "/api/tienda" || url.pathname === "/api/panel") {
+      try { return await tiendas(request, env, url); }
+      catch (e) { return json({ error: String((e && e.message) || e).slice(0, 200) }, 400); }
+    }
     if (url.pathname.startsWith("/api/")) {
       if (request.method !== "POST") return json({ error: "Usa POST." }, 405);
       if (!env.AI) return json({ error: "La IA no está conectada todavía." }, 503);

@@ -540,6 +540,7 @@ body.admin .shop{display:none}body.admin .panel{display:block}
 const QS=new URLSearchParams(location.search),QN=(QS.get('n')||'').trim().slice(0,40),QZ=(QS.get('z')||'').trim().slice(0,40);
 const SLUG=QN?'demo-'+QN.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''):(QS.get('c')||'el-bacano').replace(/[^a-z0-9-]/gi,'');
 const KEY='kapicua-colmado-'+SLUG;
+const LIVE=!QN&&SLUG!=='el-bacano';let PINLIVE=null;try{PINLIVE=sessionStorage.getItem(KEY+'-pin')}catch(e){}
 const CATS=['Víveres','Carnes y embutidos','Bebidas','Limpieza','Picadera'];
 const P=(n,u,c,p,o,m,x)=>Object.assign({n,u,c,p,ok:true,o:o||null,m:m||''},x||{});
 const SAMPLE={name:'Colmado El Bacano',barrio:'Villa Consuelo, Santo Domingo',address:'Calle Ejemplo #12, esquina Principal',hours:'Lun a Dom · 7:00 a. m. – 10:00 p. m.',open:true,delivery:true,fee:0,wa:'',voice:true,pin:'1234',
@@ -550,17 +551,18 @@ P('Cloro','galón','Limpieza',150),P('Detergente','funda','Limpieza',90),P('Jab�
 P('Galletas','paquete','Picadera',25),P('Platanitos','funda','Picadera',40),P('Chicharrón','funda','Picadera',60),P('Maní','funda','Picadera',30)],
 fiao:[{name:'Doña Carmen',items:[{k:'d',amt:850,t:'2026-11-20'},{k:'p',amt:300,t:'2026-11-21'}]},{name:'Juancito',items:[{k:'d',amt:420,t:'2026-11-21'}]}],
 sales:[]};
-if(QN){SAMPLE.name=QN;if(QZ)SAMPLE.barrio=QZ+', Santo Domingo'}
+if(QN){SAMPLE.name=QN;if(QZ)SAMPLE.barrio=QZ+', Santo Domingo';SAMPLE.hours='Horario a confirmar';SAMPLE.address='';SAMPLE.fee=null}
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const rd=n=>'RD$'+Math.round(n).toLocaleString('en-US');
 const today=()=>new Date().toLocaleDateString('en-CA');
 let S;
-try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!LIVE)try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 if(!S||!S.products)S=JSON.parse(JSON.stringify(SAMPLE));
-S.products.forEach((p,i)=>p.id=p.id||'p'+i+'_'+Math.random().toString(36).slice(2,6));
+function prepS(){S.products.forEach((p,i)=>p.id=p.id||'p'+i+'_'+Math.random().toString(36).slice(2,6));
 function defT(n){const t=norm(n);if(/\b(arroz|habichuela|platano|huevo|leche|pollo|yuca|guineo|batata|papa|cebolla|aji|tomate|ajo)/.test(t))return 0;if(/\b(cafe|azucar|aceite|mantequilla|yogurt|chocolate|cacao|manteca)/.test(t))return 16;return 18}
-S.products.forEach(p=>{if(p.t==null)p.t=defT(p.n);if(p.stock===undefined)p.stock=null;if(p.m==null)p.m='';if(p.alc==null)p.alc=/\b(cerveza|ron|whisky|vodka|vino|romo|tequila|ginebra|licor)/.test(norm(p.n));if(!p.kind&&/\bhielo\b/.test(norm(p.n)))p.kind='peso'});S.mov=S.mov||[];S.iceAmts=S.iceAmts||[25,50,100,150];
+S.products.forEach(p=>{if(p.t==null)p.t=defT(p.n);if(p.stock===undefined)p.stock=null;if(p.m==null)p.m='';if(p.alc==null)p.alc=/\b(cerveza|ron|whisky|vodka|vino|romo|tequila|ginebra|licor)/.test(norm(p.n));if(!p.kind&&/\bhielo\b/.test(norm(p.n)))p.kind='peso'});S.mov=S.mov||[];S.fiao=S.fiao||[];S.sales=S.sales||[];S.iceAmts=S.iceAmts||[25,50,100,150];}
+prepS();
 const BR=[[/arroz/,['La Garza','Campo','Pimco']],[/habichuela/,['La Famosa','Goya']],[/aceite/,['Crisol','Mazola','Capullo']],[/salami|salchicha|jamon|mortadela/,['Induveca','Don Pedro','Higüeral']],[/leche/,['Rica','Milex','Carnation']],[/jugo/,['Rica','Goya']],[/cafe/,['Santo Domingo','Monte Alto','Kalaní']],
  [/cerveza/,['Presidente','Bohemia','Brahma','Quisqueya','Stella Artois','Corona','Heineken']],[/\bron\b/,['Brugal','Barceló','Bermúdez']],[/refresco|soda/,['Coca-Cola','Pepsi','Country Club','Red Rock','Kola Real','Sprite','7Up','Fanta']],[/agua/,['Planeta Azul','Dasani','Montpellier','Crystal']],
  [/pollo/,['Pollo Cibao']],[/espagueti|pasta/,['Princesa','Milano','Barilla']],[/sopita|caldo/,['Maggi','Doña Gallina']],[/detergente/,['Ace','Fab','Ariel']],[/cloro/,['Clorox']],[/papel/,['Scott','Familia']],[/galleta/,['Club Social','Ritz','Oreo']],[/sardina|atun/,['Goya']]];
@@ -585,7 +587,8 @@ function icon(p){const t=norm(p.n+' '+p.u),h=hue(t),c=`hsl(${h} 62% 48%)`,c2=`hs
  else b=`<path d="M24 22h52v54H24z" fill="${c}"/><path d="M24 22l6-8h40l6 8z" fill="${c2}"/>${lab}`;
  return `<svg viewBox="0 0 100 90" aria-hidden="true">${b}</svg>`}
 const itb=(price,t)=>price*t/(100+t);
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));return true}catch(e){return false}};
+let pushT;function push(){if(!LIVE||!PINLIVE)return;clearTimeout(pushT);pushT=setTimeout(async()=>{try{const r=await fetch('/api/panel',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({c:SLUG,pin:PINLIVE,data:S})});if(!r.ok){const d=await r.json().catch(()=>({}));toast(d.error||'No se pudo guardar en línea')}}catch(e){toast('Sin conexión: no se guardó en línea')}},700)}
+const save=()=>{push();try{localStorage.setItem(KEY,JSON.stringify(S));return true}catch(e){return false}};
 function toPhoto(file,max=480,q=0.72){return new Promise((res,rej)=>{const fr=new FileReader();fr.onerror=rej;fr.onload=()=>{const im=new Image();im.onerror=rej;im.onload=()=>{const sc=Math.min(1,max/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',q))};im.src=fr.result};fr.readAsDataURL(file)})}
 function videoFrames(file,n){return new Promise((res,rej)=>{const v=document.createElement('video');v.muted=true;v.playsInline=true;v.preload='auto';v.src=URL.createObjectURL(file);const out=[];
   v.onerror=()=>rej(new Error('video'));v.onloadedmetadata=async()=>{try{const d=v.duration&&isFinite(v.duration)?v.duration:1;
@@ -639,7 +642,7 @@ function renderShop(){
   $('#signtxt').textContent=S.name.toUpperCase().slice(0,26);
   $('#sbarrio').textContent=S.barrio;$('#shours').textContent=S.hours;$('#shours2').textContent=S.hours;$('#saddr').textContent=S.address;
   $('#schip').className='chip'+(S.open?'':' off');$('#schiptxt').textContent=S.open?'Abierto ahora':'Cerrado ahora';
-  const del=S.delivery?(+S.fee?'Delivery '+rd(S.fee):'Delivery gratis'):'Sin delivery ahora';
+  const del=S.delivery?(S.fee==null?'Con delivery':+S.fee?'Delivery '+rd(S.fee):'Delivery gratis'):'Sin delivery ahora';
   $('#sdel').textContent=del;$('#sdel2').textContent=(S.delivery?del+' en el sector':'Por ahora sin delivery')+'. También puedes pedir aquí y pasar a buscarlo.';
   $('#swa').href=waLink('¡Saludos, '+S.name+'! Quiero hacer un pedido.');
   const tel=waNum();$('#stel').href=tel?'tel:+'+tel:'#';$('#stel').textContent=tel?'Llámanos: '+S.wa:'Llámanos';
@@ -929,7 +932,7 @@ $('#resetdemo').onclick=()=>{undoSnap=JSON.stringify(S);S=JSON.parse(JSON.string
 /* ---------- PIN y rutas ---------- */
 let unlocked=false;try{unlocked=sessionStorage.getItem(KEY+'-ok')==='1'}catch(e){}
 function gate(){$('#gate').hidden=unlocked;$('#pbody').hidden=!unlocked}
-$('#pinok').onclick=()=>{if($('#pin').value===String(S.pin||'1234')){unlocked=true;try{sessionStorage.setItem(KEY+'-ok','1')}catch(e){}gate()}else{$('#pinmsg').textContent='PIN incorrecto. En esta demo es 1234.'}};
+$('#pinok').onclick=()=>{if(LIVE){loadPanel($('#pin').value.trim());return}if($('#pin').value===String(S.pin||'1234')){unlocked=true;try{sessionStorage.setItem(KEY+'-ok','1')}catch(e){}gate()}else{$('#pinmsg').textContent='PIN incorrecto. En esta demo es 1234.'}};
 $('#pin').addEventListener('keydown',e=>{if(e.key==='Enter')$('#pinok').click()});
 function route(){document.body.classList.toggle('admin',location.hash==='#panel');window.scrollTo(0,0);gate()}
 window.addEventListener('hashchange',route);
@@ -1009,7 +1012,17 @@ function renderInvoices(){
 }
 $('#fcopy').onclick=()=>{const t=$('#fsum').textContent;try{navigator.clipboard.writeText(t).then(()=>toast('Resumen copiado'),()=>toast('Mantén el dedo sobre el texto para copiarlo'))}catch(e){toast('Mantén el dedo sobre el texto para copiarlo')}};
 function renderAll(){renderShop();renderProducts();renderFiao();renderSales();renderSettings();renderInvoices();renderStock();renderHoy()}
-renderAll();route();
+const fresh=extra=>{S=Object.assign(JSON.parse(JSON.stringify(SAMPLE)),{fiao:[],sales:[],mov:[]},extra);prepS()};
+async function loadPanel(pin,silent){try{const r=await fetch('/api/panel',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({c:SLUG,pin})});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'No se pudo entrar.');
+  if(d.data)fresh(d.data);PINLIVE=pin;try{sessionStorage.setItem(KEY+'-pin',pin);sessionStorage.setItem(KEY+'-ok','1')}catch(e){}unlocked=true;if(!d.data)push();renderAll();gate();return true}
+  catch(e){PINLIVE=null;try{sessionStorage.removeItem(KEY+'-pin')}catch(_){}if(!silent)$('#pinmsg').textContent=e.message;return false}}
+async function init(){
+  if(LIVE){unlocked=false;$('#resetdemo').hidden=true;$('#pinmsg').textContent='Escribe el PIN que le dio Cédric.';
+    try{const r=await fetch('/api/tienda?c='+encodeURIComponent(SLUG));const d=await r.json();
+      if(r.ok){if(d.exists&&d.data)fresh(d.data);else fresh({name:d.reg.name,barrio:d.reg.barrio,wa:d.reg.wa||'',hours:'Horario a confirmar',address:''})}}catch(e){}
+    if(PINLIVE)await loadPanel(PINLIVE,true)}
+  renderAll();route()}
+init();
 }
 </script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{})</script>

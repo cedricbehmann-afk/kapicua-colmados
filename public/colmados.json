@@ -1,3 +1,5 @@
 [
+  {"zona": "Bella Vista", "nombre": "Colmado Los Muchachos", "slug": "los-muchachos"},
+  {"zona": "Bella Vista", "nombre": "Colmado Victoria", "slug": "victoria"},
   {"zona": "Demostración", "nombre": "Colmado El Bacano", "slug": "el-bacano"}
 ]
