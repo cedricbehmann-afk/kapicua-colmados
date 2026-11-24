@@ -166,9 +166,37 @@ async function tiendas(request, env, url){
   return json({error:"Ruta no encontrada."},404);
 }
 
+// ---------- Vista previa del link (WhatsApp) y app instalable por colmado ----------
+async function colmadoName(env,slug){if(!REG[slug])return null;let doc=null;try{doc=env.TIENDAS&&await env.TIENDAS.get("t:"+slug,"json")}catch(e){}return{name:(doc&&doc.name)||REG[slug].name,barrio:(doc&&doc.barrio)||REG[slug].barrio}}
+async function pageWithPreview(request,env,url){
+  const res=await env.ASSETS.fetch(request);
+  if(res.status!==200||!(res.headers.get("content-type")||"").includes("text/html"))return res;
+  const slug=slugOf(url.searchParams.get("c")),qn=(url.searchParams.get("n")||"").trim().slice(0,40),qz=(url.searchParams.get("z")||"").trim().slice(0,40);
+  let info=null;
+  if(qn)info={name:qn,barrio:qz?qz+", Santo Domingo":""};else if(slug)info=await colmadoName(env,slug);
+  if(!info)return res;
+  const title=info.name,desc="Haga su pedido desde el celular"+(info.barrio?" · "+info.barrio:"")+".",img=url.origin+"/kolmado-og.png";
+  const man="/manifest.webmanifest"+(slug&&!qn?"?c="+slug:"");
+  return new HTMLRewriter()
+    .on("title",{element(e){e.setInnerContent(title)}})
+    .on('meta[property="og:title"]',{element(e){e.setAttribute("content",title)}})
+    .on('meta[property="og:description"]',{element(e){e.setAttribute("content",desc)}})
+    .on('meta[property="og:image"]',{element(e){e.setAttribute("content",img)}})
+    .on('link[rel="manifest"]',{element(e){e.setAttribute("href",man)}})
+    .transform(res);
+}
+async function manifestFor(env,url){
+  const slug=slugOf(url.searchParams.get("c"));const info=slug?await colmadoName(env,slug):null;
+  const m={name:info?info.name:"Kolmado",short_name:info?info.name.replace(/^colmado\s+/i,"").slice(0,12):"Kolmado",start_url:info?"/colmado/?c="+slug+"#panel":"/",scope:"/",display:"standalone",background_color:"#FFF8EC",theme_color:"#CE1126",lang:"es-DO",
+    icons:[{src:"/icon-192.png",sizes:"192x192",type:"image/png"},{src:"/icon-512.png",sizes:"512x512",type:"image/png",purpose:"any maskable"}]};
+  return new Response(JSON.stringify(m),{headers:{"content-type":"application/manifest+json","cache-control":"no-store"}});
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname === "/manifest.webmanifest" && url.searchParams.get("c")) return manifestFor(env, url);
+    if (url.pathname === "/colmado/" || url.pathname === "/colmado/index.html") return pageWithPreview(request, env, url);
     if (url.pathname === "/api/tienda" || url.pathname === "/api/panel") {
       try { return await tiendas(request, env, url); }
       catch (e) { return json({ error: String((e && e.message) || e).slice(0, 200) }, 400); }
