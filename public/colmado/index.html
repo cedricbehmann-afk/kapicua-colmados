@@ -114,6 +114,7 @@ body.admin .shop{display:none}body.admin .panel{display:block}
 .tabs button{flex:none;min-height:44px;padding:0 16px;border-radius:99px;border:2px solid var(--line);background:var(--card);color:var(--ink);font-weight:800}
 .tabs button[aria-selected=true]{background:var(--blue);border-color:var(--blue);color:#fff}
 .view{display:none}.view.on{display:block}
+.qrbox{background:#fff;border-radius:22px;padding:14px;max-width:360px;margin:0 auto;box-shadow:0 4px 18px rgba(0,0,0,.08)}.qrbox img{width:100%;display:block}.howto{padding-left:22px}.howto li{margin:10px 0;line-height:1.45}
 .talk{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start}
 @media(max-width:760px){.talk{grid-template-columns:minmax(0,1fr)}}
 .mic{width:min(220px,60vw);aspect-ratio:1;border-radius:50%;border:0;background:var(--red);color:#fff;display:grid;place-items:center;margin:8px auto 14px;box-shadow:0 0 0 10px light-dark(#ffd9dc,#4a1a20)}
@@ -380,6 +381,7 @@ body.admin .shop{display:none}body.admin .panel{display:block}
   <div id="pbody" hidden>
     <nav class="tabs" role="tablist">
       <button role="tab" data-v="hoy" aria-selected="true">Hoy</button>
+      <button role="tab" data-v="compartir">Compartir</button>
       <button role="tab" data-v="hablar" aria-selected="false">Hablar</button>
       <button role="tab" data-v="productos">Productos</button>
       <button role="tab" data-v="inventario">Inventario</button>
@@ -404,6 +406,24 @@ body.admin .shop{display:none}body.admin .panel{display:block}
       <p style="margin-top:0">Ventas, ITBIS, fiao y lo que hay que reponer, en un solo mensaje para tu contador o para facturar.</p>
       <div class="btns"><a class="btn" id="h-wa" href="#" rel="noopener">Enviar a mi contador por WhatsApp</a><button class="btn ghost" id="h-copy">Copiar resumen</button></div>
       <p class="demo" id="h-cnote"></p>
+    </div></section>
+
+    <section class="band view" id="v-compartir"><div class="wrap">
+      <h2>Comparte tu página</h2>
+      <p style="margin-top:0">Este es el código QR de tu colmado. Tus clientes lo escanean con la cámara del celular y entran directo a tu página para pedir.</p>
+      <div class="qrbox"><img id="qrimg" alt="Código QR de la página del colmado"></div>
+      <div class="btns" style="margin-top:16px">
+        <button class="btn" id="qr-share">Compartir (WhatsApp, estado…)</button>
+        <a class="btn ghost" id="qr-dl" download="qr-colmado.png" href="#">Descargar la imagen</a>
+        <button class="btn ghost" id="qr-copy">Copiar el link</button>
+      </div>
+      <p class="demo" id="qr-link" style="word-break:break-all"></p>
+      <h2 style="margin-top:24px">Cómo darlo a conocer</h2>
+      <ol class="howto">
+        <li><b>Estado de WhatsApp:</b> toca «Compartir», elige WhatsApp y luego «Mi estado». Todos tus contactos lo verán.</li>
+        <li><b>A tus clientes:</b> cuando alguien te pida por teléfono, mándale el link: la próxima vez pide solo.</li>
+        <li><b>En el colmado:</b> imprime la imagen y pégala en el mostrador o en la nevera. Más adelante la ponemos en tus tarjetas.</li>
+      </ol>
     </div></section>
 
     <section class="band view" id="v-hablar"><div class="wrap talk">
@@ -535,6 +555,7 @@ body.admin .shop{display:none}body.admin .panel{display:block}
 
 <div class="toast" id="toast"><span id="toasttxt"></span><button id="undo">Deshacer</button></div>
 
+<script src="/js/qrcode.js"></script>
 <script>
 {
 const QS=new URLSearchParams(location.search),QN=(QS.get('n')||'').trim().slice(0,40),QZ=(QS.get('z')||'').trim().slice(0,40);
@@ -1011,7 +1032,23 @@ function renderInvoices(){
   $('#fsum').textContent=td.length?[S.name+' · ventas del '+today(),...td.map(s=>s.t.slice(11,16)+'  '+(s.items?s.items.map(i=>i.q+' × '+i.n+' ('+(i.tr?i.tr+'%':'exento')+')').join(', ')+'  ':'')+rd(s.amt)),'Total: '+rd(td.reduce((a,s)=>a+s.amt,0)),rt(18),rt(16),X.b[0]?'Exento: '+rd(X.b[0]):'',X.sin?'Ventas sin detalle de productos: '+rd(X.sin):''].filter(Boolean).join('\n'):'Todavía no has anotado ventas hoy. Dímelas en «Hablar»: «anota venta de 500».';
 }
 $('#fcopy').onclick=()=>{const t=$('#fsum').textContent;try{navigator.clipboard.writeText(t).then(()=>toast('Resumen copiado'),()=>toast('Mantén el dedo sobre el texto para copiarlo'))}catch(e){toast('Mantén el dedo sobre el texto para copiarlo')}};
-function renderAll(){renderShop();renderProducts();renderFiao();renderSales();renderSettings();renderInvoices();renderStock();renderHoy()}
+const shopURL=()=>location.origin+location.pathname+location.search+'#tienda';
+function qrCard(){const url=shopURL(),q=qrcode(0,'M');q.addData(url);q.make();const n=q.getModuleCount(),W=900,H=1200,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
+  g.fillStyle='#FFF8EC';g.fillRect(0,0,W,H);g.fillStyle='#CE1126';g.fillRect(0,0,W,190);g.fillStyle='#fff';g.textAlign='center';g.font='900 64px Arial, sans-serif';
+  let name=S.name;while(g.measureText(name).width>W-80&&name.length>4)name=name.slice(0,-1);if(name!==S.name)name=name.trim()+'…';g.fillText(name,W/2,118);
+  g.fillStyle='#002D62';g.font='800 50px Arial, sans-serif';g.fillText('Pida aquí desde su celular',W/2,280);
+  const box=640,x0=(W-box)/2,y0=330;g.fillStyle='#fff';g.fillRect(x0-20,y0-20,box+40,box+40);const cell=box/n;g.fillStyle='#000';
+  for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(q.isDark(r,k))g.fillRect(Math.floor(x0+k*cell),Math.floor(y0+r*cell),Math.ceil(cell),Math.ceil(cell));
+  g.fillStyle='#002D62';g.font='700 40px Arial, sans-serif';g.fillText('Escanee con la cámara',W/2,1050);g.fillStyle='#7A4A1E';g.font='700 30px Arial, sans-serif';g.fillText((S.barrio||'')+(waNum()?' · Tel. '+S.wa:''),W/2,1100);
+  g.fillStyle='#9a8f80';g.font='600 24px Arial, sans-serif';g.fillText('Hecho con Kolmado',W/2,1160);return c}
+let qrBlob=null;
+function renderQR(){try{const c=qrCard();$('#qrimg').src=c.toDataURL('image/png');$('#qr-dl').href=$('#qrimg').src;$('#qr-dl').download='QR '+S.name+'.png';$('#qr-link').textContent=shopURL();c.toBlob(b=>qrBlob=b,'image/png')}catch(e){}}
+$('#qr-copy').onclick=async()=>{try{await navigator.clipboard.writeText(shopURL());toast('Link copiado')}catch(e){toast(shopURL())}};
+$('#qr-share').onclick=async()=>{const text='¡Ya puede pedir en '+S.name+' desde su celular! 👉 '+shopURL();
+  try{if(qrBlob&&navigator.canShare&&navigator.canShare({files:[new File([qrBlob],'qr.png',{type:'image/png'})]})){await navigator.share({files:[new File([qrBlob],'QR '+S.name+'.png',{type:'image/png'})],text});return}
+    if(navigator.share){await navigator.share({text,url:shopURL()});return}}catch(e){if(e&&e.name==='AbortError')return}
+  location.href='https://wa.me/?text='+encodeURIComponent(text)};
+function renderAll(){renderQR();renderShop();renderProducts();renderFiao();renderSales();renderSettings();renderInvoices();renderStock();renderHoy()}
 const fresh=extra=>{S=Object.assign(JSON.parse(JSON.stringify(SAMPLE)),{fiao:[],sales:[],mov:[]},extra);prepS()};
 async function loadPanel(pin,silent){try{const r=await fetch('/api/panel',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({c:SLUG,pin})});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'No se pudo entrar.');
   if(d.data)fresh(d.data);PINLIVE=pin;try{sessionStorage.setItem(KEY+'-pin',pin);sessionStorage.setItem(KEY+'-ok','1')}catch(e){}unlocked=true;if(!d.data)push();renderAll();gate();return true}
